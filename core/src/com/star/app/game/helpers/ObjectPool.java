@@ -13,6 +13,8 @@ public abstract class ObjectPool<T extends Poolable> {
         return activeList;
     }
 
+    //public int getFreeListSize() { return freeList.size(); }
+
     // Объясняем пулу объектов как и какой объект надо создавать
     protected abstract T newObject();
 
