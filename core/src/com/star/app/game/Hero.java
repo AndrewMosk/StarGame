@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
 
@@ -45,6 +46,7 @@ public class Hero {
                 gc.getBulletController().setup(position.x, position.y, (float) Math.cos(Math.toRadians(angle)) * 600 + velocity.x, (float) Math.sin(Math.toRadians(angle)) * 600 + velocity.y);
             }
         }
+
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             angle += 180.0f * dt;
         }
