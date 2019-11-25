@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
@@ -19,6 +21,20 @@ public class Hero {
     private int score;
     private int scoreView;
     private boolean rightOrLeftSocket;
+    private Circle hitArea;
+    private int hp;
+
+    private final int HP_MAX = 10;
+    private final float BASE_SIZE = 64.0f;
+    private final float BASE_RADIUS = BASE_SIZE / 2.0f;
+
+    public Circle getHitArea() {
+        return hitArea;
+    }
+
+    public int getHp() {
+        return hp;
+    }
 
     public int getScoreView() {
         return scoreView;
@@ -33,11 +49,15 @@ public class Hero {
     }
 
     public Vector2 getPosition() {
-        return position;
+        return new Vector2(position);
     }
 
     public Vector2 getVelocity() {
-        return velocity;
+        return new Vector2(velocity);
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
     }
 
     public Hero(GameController gc) {
@@ -47,6 +67,8 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 750.0f;
+        this.hitArea = new Circle(640, 360, BASE_RADIUS * 0.9f);
+        this.hp = this.HP_MAX;
     }
 
     public void render(SpriteBatch batch) {
@@ -118,5 +140,18 @@ public class Hero {
             position.y = ScreenManager.SCREEN_HEIGHT;
             velocity.y *= -1;
         }
+
+        hitArea.setPosition(position);
+    }
+
+    public boolean takeDamage(int amount) {
+        hp -= amount;
+        if (hp <= 0) {
+            //deactivate();
+            // не деактивация, а game over
+
+            return true;
+        }
+        return false;
     }
 }

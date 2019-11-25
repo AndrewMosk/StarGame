@@ -30,11 +30,23 @@ public class Asteroid implements Poolable {
     }
 
     public Vector2 getPosition() {
-        return position;
+        return new Vector2(position);
     }
 
     public Circle getHitArea() {
         return hitArea;
+    }
+
+    public Vector2 getVelocity() {
+        return new Vector2(velocity);
+    }
+
+    public void setPosition(Vector2 position) {
+        this.position = position;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
     }
 
     @Override

@@ -31,6 +31,14 @@ public class WorldRenderer {
         strBuilder.clear();
         strBuilder.append("SCORE: ").append(gc.getHero().getScoreView());
         font32.draw(batch, strBuilder, 20, 700);
+
+        strBuilder.clear();
+        strBuilder.append("HP: ").append(gc.getHero().getHp());
+        font32.draw(batch, strBuilder, 20, 650);
+
+        strBuilder.clear();
+        strBuilder.append(gc.getGameOver());
+        font32.draw(batch, strBuilder, 550, 400);
         batch.end();
     }
 }
