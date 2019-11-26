@@ -28,17 +28,8 @@ public class WorldRenderer {
         gc.getHero().render(batch);
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
-        strBuilder.clear();
-        strBuilder.append("SCORE: ").append(gc.getHero().getScoreView());
-        font32.draw(batch, strBuilder, 20, 700);
-
-        strBuilder.clear();
-        strBuilder.append("HP: ").append(gc.getHero().getHp());
-        font32.draw(batch, strBuilder, 20, 650);
-
-        strBuilder.clear();
-        strBuilder.append(gc.getGameOver());
-        font32.draw(batch, strBuilder, 550, 400);
+        gc.getParticleController().render(batch);
+        gc.getHero().renderGUI(batch, font32);
         batch.end();
     }
 }
