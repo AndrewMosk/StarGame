@@ -108,10 +108,13 @@ public class GameController {
                     b.deactivate();
                     if (a.takeDamage(1)) {
                         hero.addScore(a.getHpMax() * 100);
-                        //генерация бонусного предмета
-                        //бонусный предмет создается не при каждом уничтожении астеройда, а с вероятностью 10% нужно добавить эту вероятность
-                        int index = MathUtils.random(0,2);
-                        this.dropItemController.setup(a.getPosition().x, a.getPosition().y, -100.0f, dropItems[index]);
+                        //вероятность выпадания предмета 10% счисло 0 в случайной выборке от 0-9 выпадет как раз с такой вероятностью
+                        //сделаю пока 20%
+                        if (MathUtils.random(0,4) == 0) {
+                            int index = MathUtils.random(0, 2);
+                            //генерация бонусного предмета
+                            this.dropItemController.setup(a.getPosition().x, a.getPosition().y, -100.0f, dropItems[index]);
+                        }
                     }
                     break;
                 }
