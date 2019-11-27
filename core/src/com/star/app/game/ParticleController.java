@@ -31,7 +31,7 @@ public class ParticleController extends ObjectPool<Particle> {
     }
 
     @Override
-    protected Particle newObject() {
+    protected Particle newObject(String name) {
         return new Particle();
     }
 
@@ -61,7 +61,7 @@ public class ParticleController extends ObjectPool<Particle> {
     }
 
     public void setup(float x, float y, float vx, float vy, float timeMax, float size1, float size2, float r1, float g1, float b1, float a1, float r2, float g2, float b2, float a2) {
-        Particle item = getActiveElement();
+        Particle item = getActiveElement("");
         item.init(x, y, vx, vy, timeMax, size1, size2, r1, g1, b1, a1, r2, g2, b2, a2);
     }
 
