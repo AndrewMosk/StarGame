@@ -14,7 +14,7 @@ public abstract class ObjectPool<T extends Poolable> {
     }
 
     // Объясняем пулу объектов как и какой объект надо создавать
-    protected abstract T newObject();
+    protected abstract T newObject(String name);
 
     // Освобождаем элемент, который отработал свое. Перекидываем его из списка
     // активных элементов в список свободных.
@@ -32,9 +32,9 @@ public abstract class ObjectPool<T extends Poolable> {
     // списка свободных элементов, перекладываем в список активных и возвращаем
     // пользователю ссылку на только что полученный активный элемент чтобы его
     // можно было настроить
-    public T getActiveElement() {
+    public T getActiveElement(String name) {
         if (freeList.size() == 0) {
-            freeList.add(newObject());
+            freeList.add(newObject(name));
         }
         T temp = freeList.remove(freeList.size() - 1);
         activeList.add(temp);

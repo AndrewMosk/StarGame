@@ -10,8 +10,10 @@ public class GameController {
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
+    private DropItemController dropItemController;
     private Hero hero;
     private Vector2 tmpVec;
+    private String[] dropItems;
 
     public AsteroidController getAsteroidController() {
         return asteroidController;
@@ -29,6 +31,10 @@ public class GameController {
         return particleController;
     }
 
+    public DropItemController getDropItemController() {
+        return dropItemController;
+    }
+
     public Hero getHero() {
         return hero;
     }
@@ -38,12 +44,17 @@ public class GameController {
         this.hero = new Hero(this);
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
+        this.dropItemController = new DropItemController(this);
         particleController = new ParticleController();
         this.tmpVec = new Vector2(0.0f, 0.0f);
         for (int i = 0; i < 2; i++) {
             this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
         }
+        this.dropItems = new String[3];
+        this.dropItems[0] = "kit";
+        this.dropItems[1] = "ammo";
+        this.dropItems[2] = "coin";
     }
 
     public void update(float dt) {
@@ -52,6 +63,7 @@ public class GameController {
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
+        dropItemController.update(dt);
         checkCollisions();
     }
 
@@ -96,8 +108,37 @@ public class GameController {
                     b.deactivate();
                     if (a.takeDamage(1)) {
                         hero.addScore(a.getHpMax() * 100);
+                        //вероятность выпадания предмета 10% счисло 0 в случайной выборке от 0-9 выпадет как раз с такой вероятностью
+                        //сделаю пока 20%
+                        if (MathUtils.random(0,4) == 0) {
+                            int index = MathUtils.random(0, 2);
+                            //генерация бонусного предмета
+                            this.dropItemController.setup(a.getPosition().x, a.getPosition().y, -100.0f, dropItems[index]);
+                        }
                     }
                     break;
+                }
+            }
+        }
+
+        //столкновение с выпавшим призом
+        for (int i = 0; i < dropItemController.getActiveList().size(); i++) {
+            DropItem dropItem = dropItemController.getActiveList().get(i);
+            if (dropItem.getHitArea().overlaps(hero.getHitArea())) {
+                dropItem.takeDamage(1);
+
+                String itemName = dropItem.getName();
+                //получение бонуса
+                switch (itemName) {
+                    case "kit":
+                        hero.addHp(10);
+                        break;
+                    case "coin":
+                        hero.addScore(1000);
+                        break;
+                    case "ammo":
+                        hero.getCurrentWeapon().addBullets(15);
+                        break;
                 }
             }
         }

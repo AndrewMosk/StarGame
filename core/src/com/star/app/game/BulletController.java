@@ -11,7 +11,7 @@ public class BulletController extends ObjectPool<Bullet> {
     private TextureRegion bulletTexture;
 
     @Override
-    protected Bullet newObject() {
+    protected Bullet newObject(String name) {
         return new Bullet(gc);
     }
 
@@ -28,7 +28,7 @@ public class BulletController extends ObjectPool<Bullet> {
     }
 
     public void setup(float x, float y, float vx, float vy, float angle) {
-        getActiveElement().activate(x, y, vx, vy, angle);
+        getActiveElement("").activate(x, y, vx, vy, angle);
     }
 
     public void update(float dt) {
