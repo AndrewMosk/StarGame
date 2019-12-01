@@ -9,7 +9,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     private GameController gc;
 
     @Override
-    protected Asteroid newObject(String name) {
+    protected Asteroid newObject() {
         return new Asteroid(gc);
     }
 
@@ -25,7 +25,7 @@ public class AsteroidController extends ObjectPool<Asteroid> {
     }
 
     public void setup(float x, float y, float vx, float vy, float scale) {
-        getActiveElement("").activate(x, y, vx, vy, scale);
+        getActiveElement().activate(x, y, vx, vy, scale);
     }
 
     public void update(float dt) {

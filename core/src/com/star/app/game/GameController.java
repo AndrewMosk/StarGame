@@ -10,10 +10,9 @@ public class GameController {
     private AsteroidController asteroidController;
     private BulletController bulletController;
     private ParticleController particleController;
-    private DropItemController dropItemController;
+    private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tmpVec;
-    private String[] dropItems;
 
     public AsteroidController getAsteroidController() {
         return asteroidController;
@@ -27,12 +26,12 @@ public class GameController {
         return background;
     }
 
-    public ParticleController getParticleController() {
-        return particleController;
+    public PowerUpsController getPowerUpsController() {
+        return powerUpsController;
     }
 
-    public DropItemController getDropItemController() {
-        return dropItemController;
+    public ParticleController getParticleController() {
+        return particleController;
     }
 
     public Hero getHero() {
@@ -41,20 +40,16 @@ public class GameController {
 
     public GameController() {
         this.background = new Background(this);
-        this.hero = new Hero(this);
+        this.hero = new Hero(this, "PLAYER1");
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
-        this.dropItemController = new DropItemController(this);
-        particleController = new ParticleController();
+        this.particleController = new ParticleController();
+        this.powerUpsController = new PowerUpsController(this);
         this.tmpVec = new Vector2(0.0f, 0.0f);
         for (int i = 0; i < 2; i++) {
             this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
                     MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
         }
-        this.dropItems = new String[3];
-        this.dropItems[0] = "kit";
-        this.dropItems[1] = "ammo";
-        this.dropItems[2] = "coin";
     }
 
     public void update(float dt) {
@@ -63,7 +58,7 @@ public class GameController {
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
-        dropItemController.update(dt);
+        powerUpsController.update(dt);
         checkCollisions();
     }
 
@@ -80,9 +75,9 @@ public class GameController {
                 float sumScl = hero.getHitArea().radius * 2 + a.getHitArea().radius;
 
                 hero.getVelocity().mulAdd(tmpVec, 400.0f * halfOverLen * a.getHitArea().radius / sumScl);
-                a.getVelocity().mulAdd(tmpVec, 400.0f * -halfOverLen  * hero.getHitArea().radius / sumScl);
+                a.getVelocity().mulAdd(tmpVec, 400.0f * -halfOverLen * hero.getHitArea().radius / sumScl);
 
-                if(a.takeDamage(2)) {
+                if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 10);
                 }
                 hero.takeDamage(2);
@@ -108,12 +103,8 @@ public class GameController {
                     b.deactivate();
                     if (a.takeDamage(1)) {
                         hero.addScore(a.getHpMax() * 100);
-                        //вероятность выпадания предмета 10% счисло 0 в случайной выборке от 0-9 выпадет как раз с такой вероятностью
-                        //сделаю пока 20%
-                        if (MathUtils.random(0,4) == 0) {
-                            int index = MathUtils.random(0, 2);
-                            //генерация бонусного предмета
-                            this.dropItemController.setup(a.getPosition().x, a.getPosition().y, -100.0f, dropItems[index]);
+                        for (int k = 0; k < 3; k++) {
+                            powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() / 4.0f);
                         }
                     }
                     break;
@@ -121,26 +112,17 @@ public class GameController {
             }
         }
 
-        //столкновение с выпавшим призом
-        for (int i = 0; i < dropItemController.getActiveList().size(); i++) {
-            DropItem dropItem = dropItemController.getActiveList().get(i);
-            if (dropItem.getHitArea().overlaps(hero.getHitArea())) {
-                dropItem.takeDamage(1);
-
-                String itemName = dropItem.getName();
-                //получение бонуса
-                switch (itemName) {
-                    case "kit":
-                        hero.addHp(10);
-                        break;
-                    case "coin":
-                        hero.addScore(1000);
-                        break;
-                    case "ammo":
-                        hero.getCurrentWeapon().addBullets(15);
-                        break;
-                }
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            if (hero.getHitArea().contains(p.getPosition())) {
+                hero.consume(p);
+                particleController.getEffectBuilder().takePowerUpEffect(p.getPosition().x, p.getPosition().y);
+                p.deactivate();
             }
         }
+    }
+
+    public void dispose() {
+        background.dispose();
     }
 }
