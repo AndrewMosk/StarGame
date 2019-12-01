@@ -23,6 +23,10 @@ public class GameScreen extends AbstractScreen {
     private BitmapFont font24;
     private BitmapFont font32;
 
+    public GameController getGameController() {
+        return gameController;
+    }
+
     public GameScreen(SpriteBatch batch) {
         super(batch);
     }

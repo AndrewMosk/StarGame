@@ -140,8 +140,12 @@ public class Hero {
         checkSpaceBorders();
     }
 
-    public void takeDamage(int amount) {
+    public boolean takeDamage(int amount) {
         hp -= amount;
+        if (hp <= 0) {
+            return true;
+        }
+        return false;
     }
 
     public void tryToFire() {

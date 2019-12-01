@@ -92,7 +92,9 @@ public class GameController {
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 10);
                 }
-                hero.takeDamage(2);
+                if (hero.takeDamage(2)) {
+                    ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME_OVER);
+                }
             }
         }
 
