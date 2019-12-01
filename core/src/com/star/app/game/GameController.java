@@ -13,6 +13,15 @@ public class GameController {
     private PowerUpsController powerUpsController;
     private Hero hero;
     private Vector2 tmpVec;
+    private boolean paused;
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
 
     public AsteroidController getAsteroidController() {
         return asteroidController;
@@ -45,6 +54,7 @@ public class GameController {
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
         this.powerUpsController = new PowerUpsController(this);
+        this.paused = false;
         this.tmpVec = new Vector2(0.0f, 0.0f);
         for (int i = 0; i < 2; i++) {
             this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
@@ -53,13 +63,15 @@ public class GameController {
     }
 
     public void update(float dt) {
-        background.update(dt);
-        hero.update(dt);
-        asteroidController.update(dt);
-        bulletController.update(dt);
-        particleController.update(dt);
-        powerUpsController.update(dt);
-        checkCollisions();
+        if (!paused) {
+            background.update(dt);
+            hero.update(dt);
+            asteroidController.update(dt);
+            bulletController.update(dt);
+            particleController.update(dt);
+            powerUpsController.update(dt);
+            checkCollisions();
+        }
     }
 
     public void checkCollisions() {
