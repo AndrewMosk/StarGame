@@ -14,7 +14,7 @@ import com.star.app.screen.utils.Assets;
 
 public class ScreenManager {
     public enum ScreenType {
-        MENU, GAME, GAME_OVER
+        MENU, GAME, GAME_OVER, SETTINGS
     }
 
     public static final int SCREEN_WIDTH = 1280;
@@ -28,6 +28,7 @@ public class ScreenManager {
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
     private GameOverScreen gameOverScreen;
+    private SettingsScreen settingsScreen;
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
@@ -56,6 +57,7 @@ public class ScreenManager {
         this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
+        this.settingsScreen = new SettingsScreen(batch);
         // чтобы получить ссылку на Hero прокидываю сюда gameScreen
         this.gameOverScreen = new GameOverScreen(batch, this.gameScreen);
         this.loadingScreen = new LoadingScreen(batch);
@@ -92,6 +94,10 @@ public class ScreenManager {
             case GAME_OVER:
                 targetScreen = gameOverScreen;
                 Assets.getInstance().loadAssets(ScreenType.GAME_OVER);
+                break;
+            case SETTINGS:
+                targetScreen = settingsScreen;
+                Assets.getInstance().loadAssets(ScreenType.SETTINGS);
                 break;
         }
     }

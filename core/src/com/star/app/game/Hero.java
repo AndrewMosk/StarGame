@@ -66,7 +66,7 @@ public class Hero {
         this.velocity = new Vector2(0, 0);
         this.angle = 0.0f;
         this.enginePower = 750.0f;
-        this.hp = 100;
+        this.hp = 10;
         this.strBuilder = new StringBuilder();
         this.hitArea = new Circle(position, 26.0f);
         this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);

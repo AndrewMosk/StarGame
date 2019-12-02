@@ -44,13 +44,22 @@ public class MenuScreen extends AbstractScreen {
 
         Button btnNewGame = new TextButton("New Game", textButtonStyle);
         Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        btnNewGame.setPosition(480, 210);
+        Button btnSettings = new TextButton("Settings", textButtonStyle);
+        btnNewGame.setPosition(480, 310);
+        btnSettings.setPosition(480, 210);
         btnExitGame.setPosition(480, 110);
 
         btnNewGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
+            }
+        });
+
+        btnSettings.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.SETTINGS);
             }
         });
 
@@ -62,6 +71,7 @@ public class MenuScreen extends AbstractScreen {
         });
 
         stage.addActor(btnNewGame);
+        stage.addActor(btnSettings);
         stage.addActor(btnExitGame);
         skin.dispose();
 
