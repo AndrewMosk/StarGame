@@ -56,7 +56,8 @@ public class ScreenManager {
         this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
-        this.gameOverScreen = new GameOverScreen(batch, this.gameScreen.getGameController());
+        // чтобы получить ссылку на Hero прокидываю сюда gameScreen
+        this.gameOverScreen = new GameOverScreen(batch, this.gameScreen);
         this.loadingScreen = new LoadingScreen(batch);
     }
 

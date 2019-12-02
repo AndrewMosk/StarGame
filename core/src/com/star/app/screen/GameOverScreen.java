@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.star.app.game.Background;
 import com.star.app.game.GameController;
+import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
 
@@ -23,11 +24,11 @@ public class GameOverScreen extends AbstractScreen {
     private BitmapFont font32;
     private BitmapFont font24;
     private Stage stage;
-    private GameController gameController;
+    private GameScreen gameScreen;
 
-    public GameOverScreen(SpriteBatch batch, GameController gameController) {
+    public GameOverScreen(SpriteBatch batch, GameScreen gameScreen) {
         super(batch);
-        this.gameController = gameController;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -89,7 +90,7 @@ public class GameOverScreen extends AbstractScreen {
         batch.begin();
         background.render(batch);
         font72.draw(batch, "GAME OVER", 0, 600, 1280, 1, false);
-        font32.draw(batch, "SCORE: " + gameController.getHero().getScore(), 0, 400, 1280, 1, false);
+        font32.draw(batch, "SCORE: " + gameScreen.getGameController().getHero().getScore(), 0, 400, 1280, 1, false);
         batch.end();
         stage.draw();
     }
