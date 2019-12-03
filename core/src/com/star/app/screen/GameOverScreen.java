@@ -1,5 +1,6 @@
 package com.star.app.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
@@ -12,17 +13,22 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.star.app.game.Background;
+import com.star.app.game.GameController;
+import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
 
-public class MenuScreen extends AbstractScreen {
+public class GameOverScreen extends AbstractScreen {
     private Background background;
     private BitmapFont font72;
+    private BitmapFont font32;
     private BitmapFont font24;
     private Stage stage;
+    private GameScreen gameScreen;
 
-    public MenuScreen(SpriteBatch batch) {
+    public GameOverScreen(SpriteBatch batch, GameScreen gameScreen) {
         super(batch);
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -30,6 +36,7 @@ public class MenuScreen extends AbstractScreen {
         this.background = new Background(null);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
+        this.font32 = Assets.getInstance().getAssetManager().get("fonts/font32.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
 
         Gdx.input.setInputProcessor(stage);
@@ -42,24 +49,15 @@ public class MenuScreen extends AbstractScreen {
         textButtonStyle.font = font24;
         skin.add("simpleSkin", textButtonStyle);
 
-        Button btnNewGame = new TextButton("New Game", textButtonStyle);
+        Button btnRestartGame = new TextButton("Restart Game", textButtonStyle);
         Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        Button btnSettings = new TextButton("Settings", textButtonStyle);
-        btnNewGame.setPosition(480, 310);
-        btnSettings.setPosition(480, 210);
+        btnRestartGame.setPosition(480, 210);
         btnExitGame.setPosition(480, 110);
 
-        btnNewGame.addListener(new ChangeListener() {
+        btnRestartGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
-            }
-        });
-
-        btnSettings.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.SETTINGS);
             }
         });
 
@@ -70,8 +68,7 @@ public class MenuScreen extends AbstractScreen {
             }
         });
 
-        stage.addActor(btnNewGame);
-        stage.addActor(btnSettings);
+        stage.addActor(btnRestartGame);
         stage.addActor(btnExitGame);
         skin.dispose();
 
@@ -92,7 +89,8 @@ public class MenuScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.render(batch);
-        font72.draw(batch, "Star Game 2019", 0, 600, 1280, 1, false);
+        font72.draw(batch, "GAME OVER", 0, 600, 1280, 1, false);
+        font32.draw(batch, "SCORE: " + gameScreen.getGameController().getHero().getScore(), 0, 400, 1280, 1, false);
         batch.end();
         stage.draw();
     }
