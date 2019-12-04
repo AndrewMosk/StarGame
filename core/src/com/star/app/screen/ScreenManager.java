@@ -9,6 +9,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.StarGame;
 import com.star.app.game.Hero;
+import com.star.app.game.HeroSettings;
+import com.star.app.game.Weapon;
 import com.star.app.screen.utils.Assets;
 
 public class ScreenManager {
@@ -83,6 +85,13 @@ public class ScreenManager {
             case GAME:
                 targetScreen = gameScreen;
                 gameScreen.setLevel((int)args[0]);
+                if (!(args[1] == null)) {
+                    HeroSettings heroSettings = (HeroSettings) args[1];
+                    gameScreen.setScore(heroSettings.getScore());
+                    gameScreen.setHp(heroSettings.getHp());
+                    gameScreen.setMoney(heroSettings.getMoney());
+                    gameScreen.setWeapon(heroSettings.getWeapon());
+                }
                 Assets.getInstance().loadAssets(ScreenType.GAME);
                 break;
             case MENU:
