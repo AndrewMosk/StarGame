@@ -1,8 +1,6 @@
 package com.star.app.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,8 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.game.Background;
-import com.star.app.game.GameController;
 import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
@@ -21,65 +20,33 @@ import com.star.app.screen.utils.OptionsUtils;
 public class GameOverScreen extends AbstractScreen {
     private Background background;
     private BitmapFont font72;
-    private BitmapFont font32;
+    private BitmapFont font48;
     private BitmapFont font24;
-    private Stage stage;
-    private GameScreen gameScreen;
+    private Hero defeatedHero;
+    private StringBuilder strBuilder;
 
-    public GameOverScreen(SpriteBatch batch, GameScreen gameScreen) {
+    public void setDefeatedHero(Hero defeatedHero) {
+        this.defeatedHero = defeatedHero;
+    }
+
+    public GameOverScreen(SpriteBatch batch) {
         super(batch);
-        this.gameScreen = gameScreen;
+        this.strBuilder = new StringBuilder();
     }
 
     @Override
     public void show() {
         this.background = new Background(null);
-        this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.font72 = Assets.getInstance().getAssetManager().get("fonts/font72.ttf");
-        this.font32 = Assets.getInstance().getAssetManager().get("fonts/font32.ttf");
+        this.font72 = Assets.getInstance().getAssetManager().get("fonts/font48.ttf");
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
-
-        Gdx.input.setInputProcessor(stage);
-
-        Skin skin = new Skin();
-        skin.addRegions(Assets.getInstance().getAtlas());
-
-        TextButton.TextButtonStyle textButtonStyle = new TextButton.TextButtonStyle();
-        textButtonStyle.up = skin.getDrawable("simpleButton");
-        textButtonStyle.font = font24;
-        skin.add("simpleSkin", textButtonStyle);
-
-        Button btnRestartGame = new TextButton("Restart Game", textButtonStyle);
-        Button btnExitGame = new TextButton("Exit Game", textButtonStyle);
-        btnRestartGame.setPosition(480, 210);
-        btnExitGame.setPosition(480, 110);
-
-        btnRestartGame.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
-            }
-        });
-
-        btnExitGame.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
-
-        stage.addActor(btnRestartGame);
-        stage.addActor(btnExitGame);
-        skin.dispose();
-
-        if (!OptionsUtils.isOptionsExists()) {
-            OptionsUtils.createDefaultProperties();
-        }
     }
 
     public void update(float dt) {
         background.update(dt);
-        stage.act(dt);
+        if (Gdx.input.justTouched()) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.MENU);
+        }
     }
 
     @Override
@@ -89,10 +56,13 @@ public class GameOverScreen extends AbstractScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.render(batch);
-        font72.draw(batch, "GAME OVER", 0, 600, 1280, 1, false);
-        font32.draw(batch, "SCORE: " + gameScreen.getGameController().getHero().getScore(), 0, 400, 1280, 1, false);
+        font72.draw(batch, "Game Over", 0, 960, ScreenManager.SCREEN_WIDTH, Align.center, false);
+        strBuilder.clear();
+        strBuilder.append("Hero Score: ").append(defeatedHero.getScore()).append("\n");
+        strBuilder.append("Hero Score (copy): ").append(defeatedHero.getScore()).append("\n");
+        font48.draw(batch, strBuilder, 0, 600, ScreenManager.SCREEN_WIDTH, Align.center, false);
+        font24.draw(batch, "Tap screen to return to main menu...", 0, 40, ScreenManager.SCREEN_WIDTH, Align.center, false);
         batch.end();
-        stage.draw();
     }
 
     @Override
