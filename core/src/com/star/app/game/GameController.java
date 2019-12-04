@@ -150,6 +150,15 @@ public class GameController {
                 }
             }
         }
+        // при приближении к power-ups они начинали лететь в сторону игрока
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            float dst = p.getPosition().dst(hero.getPosition());
+            if (dst<100) {
+                Vector2 vector2 = hero.getPosition().cpy().sub(p.getPosition());
+                p.getPosition().mulAdd(vector2, 0.05f);
+            }
+        }
 
         for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
             PowerUp p = powerUpsController.getActiveList().get(i);
