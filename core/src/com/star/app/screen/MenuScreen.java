@@ -51,7 +51,8 @@ public class MenuScreen extends AbstractScreen {
         btnNewGame.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME);
+                //из меню стартует первый уровень
+                ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, 1);
             }
         });
 

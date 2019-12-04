@@ -49,7 +49,7 @@ public class GameController {
         return hero;
     }
 
-    public GameController(SpriteBatch batch) {
+    public GameController(SpriteBatch batch, int level) {
         this.background = new Background(this);
         this.hero = new Hero(this, "PLAYER1");
         this.asteroidController = new AsteroidController(this);
@@ -59,11 +59,16 @@ public class GameController {
         this.tmpVec = new Vector2(0.0f, 0.0f);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
-        this.level = 1;
+        this.level = level;
+        System.out.println(this.level);
         Gdx.input.setInputProcessor(stage);
-        for (int i = 0; i < 2; i++) {
+        createAsteroids();
+    }
+
+    void createAsteroids() {
+        for (int i = 0; i < 1; i++) {
             this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
+                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f, level);
         }
     }
 
@@ -77,6 +82,10 @@ public class GameController {
         checkCollisions();
         if(!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
+        }
+        if (asteroidController.getActiveList().size() == 0) {
+            level ++;
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level);
         }
         stage.act(dt);
     }
@@ -116,7 +125,7 @@ public class GameController {
                 hero.getPosition().mulAdd(tmpVec, halfOverLen);
                 a.getPosition().mulAdd(tmpVec, -halfOverLen);
                 hit(hero, a);
-                if (a.takeDamage(2)) {
+                if (a.takeDamage(2, level)) {
                     hero.addScore(a.getHpMax() * 10);
                 }
                 hero.takeDamage(2);
@@ -140,7 +149,7 @@ public class GameController {
                     );
 
                     b.deactivate();
-                    if (a.takeDamage(1)) {
+                    if (a.takeDamage(1, level)) {
                         hero.addScore(a.getHpMax() * 100);
                         for (int k = 0; k < 3; k++) {
                             powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() / 4.0f);

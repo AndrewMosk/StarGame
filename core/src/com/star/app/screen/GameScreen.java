@@ -9,6 +9,11 @@ import com.star.app.screen.utils.Assets;
 public class GameScreen extends AbstractScreen {
     private GameController gameController;
     private WorldRenderer worldRenderer;
+    private int level;
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
 
     public GameScreen(SpriteBatch batch) {
         super(batch);
@@ -17,7 +22,7 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void show() {
         Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME);
-        this.gameController = new GameController(batch);
+        this.gameController = new GameController(batch, level);
         this.worldRenderer = new WorldRenderer(gameController, batch);
     }
 

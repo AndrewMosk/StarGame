@@ -82,6 +82,7 @@ public class ScreenManager {
         switch (type) {
             case GAME:
                 targetScreen = gameScreen;
+                gameScreen.setLevel((int)args[0]);
                 Assets.getInstance().loadAssets(ScreenType.GAME);
                 break;
             case MENU:

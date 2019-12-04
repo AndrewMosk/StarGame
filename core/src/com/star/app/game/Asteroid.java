@@ -63,27 +63,27 @@ public class Asteroid implements Poolable {
         this.texture = Assets.getInstance().getAtlas().findRegion("asteroid");
     }
 
-    public boolean takeDamage(int amount) {
+    public boolean takeDamage(int amount, int level) {
         hp -= amount;
         if (hp <= 0) {
             deactivate();
             if (scale > 0.9f) {
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
+                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, level);
+                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, level);
             } else if (scale > 0.25f) {
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
+                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, level);
+                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, level);
+                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, level);
             }
             return true;
         }
         return false;
     }
 
-    public void activate(float x, float y, float vx, float vy, float scale) {
+    public void activate(float x, float y, float vx, float vy, float scale, int level) {
         this.position.set(x, y);
         this.velocity.set(vx, vy);
-        this.hpMax = (int) (10 * scale);
+        this.hpMax = (int) (10 * scale * level);
         this.hp = this.hpMax;
         this.angle = MathUtils.random(0.0f, 360.0f);
         this.hitArea.setPosition(position);
