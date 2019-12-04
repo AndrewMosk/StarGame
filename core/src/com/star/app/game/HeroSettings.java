@@ -5,12 +5,24 @@ public class HeroSettings {
     private int hp;
     private int money;
     private Weapon weapon;
+    private Hero.Skill[] skills;
+    private Shop shop;
 
-    public HeroSettings(int score, int hp, int money, Weapon weapon) {
+    public HeroSettings(int score, int hp, int money, Weapon weapon, Hero.Skill[] skills, Shop shop) {
         this.score = score;
         this.hp = hp;
         this.money = money;
         this.weapon = weapon;
+        this.skills = skills;
+        this.shop = shop;
+    }
+
+    public Hero.Skill[] getSkills() {
+        return skills;
+    }
+
+    public Shop getShop() {
+        return shop;
     }
 
     public int getScore() {

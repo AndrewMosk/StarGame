@@ -2,11 +2,15 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Align;
+import com.star.app.screen.GameScreen;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 import static java.lang.Math.*;
 
@@ -20,7 +24,9 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
-    //private HeroSettings heroSettings;
+    //private BitmapFont font24;
+    private SpriteBatch batch;
+    private GameScreen gameScreen;
 
     public Stage getStage() {
         return stage;
@@ -51,15 +57,16 @@ public class GameController {
     }
 
 
-    public GameController(SpriteBatch batch, int level, int score, int hp, int money, Weapon weapon) {
-   //public GameController(SpriteBatch batch, int level) {
+    public GameController(SpriteBatch batch, int level, int score, int hp, int money, Weapon weapon, Hero.Skill[] skills, Shop shop, GameScreen gameScreen) {
         this.background = new Background(this);
-        //this.heroSettings = new HeroSettings(score, hp, money, weapon);
+//        this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
+        this.gameScreen = gameScreen;
+        this.batch = batch;
 
         if (weapon == null){
             this.hero = new Hero(this, "PLAYER1", null);
         }else {
-            this.hero = new Hero(this, "PLAYER1", new HeroSettings(score, hp, money, weapon));
+            this.hero = new Hero(this, "PLAYER1", new HeroSettings(score, hp, money, weapon, skills, shop));
         }
 
 
@@ -96,6 +103,13 @@ public class GameController {
         }
         if (asteroidController.getActiveList().size() == 0) {
             level ++;
+//            font24.draw(batch, "Level " + level, 0, 40, ScreenManager.SCREEN_WIDTH, Align.center, false);
+            gameScreen.writeLabel("Level " + level);
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level, hero.getHeroSettings());
         }
         stage.act(dt);

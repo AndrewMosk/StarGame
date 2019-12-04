@@ -92,7 +92,7 @@ public class Hero {
     }
 
     public HeroSettings getHeroSettings() {
-        return new HeroSettings(score, hp, money, currentWeapon);
+        return new HeroSettings(score, hp, money, currentWeapon, skills, shop);
     }
 
     public boolean isMoneyEnough(int amount) {
@@ -161,6 +161,10 @@ public class Hero {
             weapon.setHero(this);
             this.currentWeapon = weapon;
             this.score = heroSettings.getScore();
+            this.skills = heroSettings.getSkills();
+            Shop shop = heroSettings.getShop();
+            //shop.setHero(this);
+            this.shop = shop;
         }
 
         this.strBuilder = new StringBuilder();
@@ -168,13 +172,6 @@ public class Hero {
         this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);
         this.createSkillsTable();
         this.shop = new Shop(this);
-//        this.currentWeapon = new Weapon(
-//                gc, this, "Laser", 0.2f, 1, 500.0f, 320,
-//                new Vector3[]{
-//                        new Vector3(24, 90, 0),
-//                        new Vector3(24, -90, 0)
-//                }
-//        );
     }
 
 

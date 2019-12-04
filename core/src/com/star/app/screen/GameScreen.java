@@ -1,10 +1,10 @@
 package com.star.app.screen;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.star.app.game.GameController;
-import com.star.app.game.Weapon;
-import com.star.app.game.WorldRenderer;
+import com.badlogic.gdx.utils.Align;
+import com.star.app.game.*;
 import com.star.app.screen.utils.Assets;
 
 public class GameScreen extends AbstractScreen {
@@ -15,6 +15,13 @@ public class GameScreen extends AbstractScreen {
     private int hp;
     private int money;
     private Weapon weapon;
+    private Hero.Skill[] skills;
+    private Shop shop;
+    private BitmapFont font24;
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
 
     public void setScore(int score) {
         this.score = score;
@@ -36,6 +43,10 @@ public class GameScreen extends AbstractScreen {
         this.level = level;
     }
 
+    public void setSkills(Hero.Skill[] skills) {
+        this.skills = skills;
+    }
+
     public GameScreen(SpriteBatch batch) {
         super(batch);
     }
@@ -43,8 +54,14 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void show() {
         Assets.getInstance().loadAssets(ScreenManager.ScreenType.GAME);
-        this.gameController = new GameController(batch, level, score, hp, money, weapon);
+        this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
+        this.gameController = new GameController(batch, level, score, hp, money, weapon, skills, shop, this);
         this.worldRenderer = new WorldRenderer(gameController, batch);
+    }
+
+    public void writeLabel(String text) {
+        font24.draw(batch, text, 0, 40, ScreenManager.SCREEN_WIDTH, Align.center, false);
+        // в рендере нужно ставить?
     }
 
     @Override

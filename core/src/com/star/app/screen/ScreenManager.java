@@ -91,6 +91,7 @@ public class ScreenManager {
                     gameScreen.setHp(heroSettings.getHp());
                     gameScreen.setMoney(heroSettings.getMoney());
                     gameScreen.setWeapon(heroSettings.getWeapon());
+                    gameScreen.setSkills(heroSettings.getSkills());
                 }
                 Assets.getInstance().loadAssets(ScreenType.GAME);
                 break;
