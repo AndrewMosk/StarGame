@@ -1,6 +1,6 @@
 package com.star.app.screen;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -8,18 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.StarGame;
-import com.star.app.game.GameController;
 import com.star.app.game.Hero;
 import com.star.app.screen.utils.Assets;
 
 public class ScreenManager {
     public enum ScreenType {
-        MENU, GAME, GAME_OVER, SETTINGS
+        MENU, GAME, GAMEOVER
     }
 
-    public static final int SCREEN_WIDTH = 1280;
+    public static final int SCREEN_WIDTH = 1920;
     public static final int HALF_SCREEN_WIDTH = SCREEN_WIDTH / 2;
-    public static final int SCREEN_HEIGHT = 720;
+    public static final int SCREEN_HEIGHT = 1080;
     public static final int HALF_SCREEN_HEIGHT = SCREEN_HEIGHT / 2;
 
     private StarGame game;
@@ -28,7 +27,6 @@ public class ScreenManager {
     private GameScreen gameScreen;
     private MenuScreen menuScreen;
     private GameOverScreen gameOverScreen;
-    private SettingsScreen settingsScreen;
     private Screen targetScreen;
     private Viewport viewport;
     private Camera camera;
@@ -57,9 +55,7 @@ public class ScreenManager {
         this.viewport = new FitViewport(SCREEN_WIDTH, SCREEN_HEIGHT, camera);
         this.gameScreen = new GameScreen(batch);
         this.menuScreen = new MenuScreen(batch);
-        this.settingsScreen = new SettingsScreen(batch);
-        // чтобы получить ссылку на Hero прокидываю сюда gameScreen
-        this.gameOverScreen = new GameOverScreen(batch, this.gameScreen);
+        this.gameOverScreen = new GameOverScreen(batch);
         this.loadingScreen = new LoadingScreen(batch);
     }
 
@@ -74,9 +70,10 @@ public class ScreenManager {
         batch.setProjectionMatrix(camera.combined);
     }
 
-    public void changeScreen(ScreenType type) {
+    public void changeScreen(ScreenType type, Object... args) {
         Screen screen = game.getScreen();
         Assets.getInstance().clear();
+        Gdx.input.setInputProcessor(null);
         if (screen != null) {
             screen.dispose();
         }
@@ -91,13 +88,10 @@ public class ScreenManager {
                 targetScreen = menuScreen;
                 Assets.getInstance().loadAssets(ScreenType.MENU);
                 break;
-            case GAME_OVER:
+            case GAMEOVER:
                 targetScreen = gameOverScreen;
-                Assets.getInstance().loadAssets(ScreenType.GAME_OVER);
-                break;
-            case SETTINGS:
-                targetScreen = settingsScreen;
-                Assets.getInstance().loadAssets(ScreenType.SETTINGS);
+                gameOverScreen.setDefeatedHero((Hero)args[0]);
+                Assets.getInstance().loadAssets(ScreenType.GAMEOVER);
                 break;
         }
     }
