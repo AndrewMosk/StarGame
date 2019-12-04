@@ -20,7 +20,7 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
-    private HeroSettings heroSettings;
+    //private HeroSettings heroSettings;
 
     public Stage getStage() {
         return stage;
@@ -54,12 +54,15 @@ public class GameController {
     public GameController(SpriteBatch batch, int level, int score, int hp, int money, Weapon weapon) {
    //public GameController(SpriteBatch batch, int level) {
         this.background = new Background(this);
+        //this.heroSettings = new HeroSettings(score, hp, money, weapon);
+
         if (weapon == null){
-            this.heroSettings = null;
+            this.hero = new Hero(this, "PLAYER1", null);
         }else {
-            this.heroSettings = new HeroSettings(score, hp, money, weapon);
+            this.hero = new Hero(this, "PLAYER1", new HeroSettings(score, hp, money, weapon));
         }
-        this.hero = new Hero(this, "PLAYER1", heroSettings);
+
+
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
@@ -93,7 +96,7 @@ public class GameController {
         }
         if (asteroidController.getActiveList().size() == 0) {
             level ++;
-            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level, heroSettings);
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level, hero.getHeroSettings());
         }
         stage.act(dt);
     }

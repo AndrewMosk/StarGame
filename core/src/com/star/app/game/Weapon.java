@@ -20,6 +20,14 @@ public class Weapon {
     //   z - угол смещения вылета пуль относительно направления корабля
     private Vector3[] slots;
 
+    public void setGc(GameController gc) {
+        this.gc = gc;
+    }
+
+    public void setHero(Hero hero) {
+        this.hero = hero;
+    }
+
     public float getFirePeriod() {
         return firePeriod;
     }

@@ -91,17 +91,9 @@ public class Hero {
         return shop;
     }
 
-//    public int getHp() {
-//        return hp;
-//    }
-//
-//    public int getMoney() {
-//        return money;
-//    }
-//
-//    public Weapon getCurrentWeapon() {
-//        return currentWeapon;
-//    }
+    public HeroSettings getHeroSettings() {
+        return new HeroSettings(score, hp, money, currentWeapon);
+    }
 
     public boolean isMoneyEnough(int amount) {
         return money >= amount;
@@ -164,7 +156,10 @@ public class Hero {
             // создаю игрока по данным прошлого уровня
             this.hp = heroSettings.getHp();
             this.money = heroSettings.getMoney();
-            this.currentWeapon = heroSettings.getWeapon();
+            Weapon weapon = heroSettings.getWeapon();
+            weapon.setGc(gc);
+            weapon.setHero(this);
+            this.currentWeapon = weapon;
             this.score = heroSettings.getScore();
         }
 
@@ -173,13 +168,13 @@ public class Hero {
         this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);
         this.createSkillsTable();
         this.shop = new Shop(this);
-        this.currentWeapon = new Weapon(
-                gc, this, "Laser", 0.2f, 1, 500.0f, 320,
-                new Vector3[]{
-                        new Vector3(24, 90, 0),
-                        new Vector3(24, -90, 0)
-                }
-        );
+//        this.currentWeapon = new Weapon(
+//                gc, this, "Laser", 0.2f, 1, 500.0f, 320,
+//                new Vector3[]{
+//                        new Vector3(24, 90, 0),
+//                        new Vector3(24, -90, 0)
+//                }
+//        );
     }
 
 
