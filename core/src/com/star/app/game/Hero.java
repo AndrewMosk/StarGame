@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
@@ -82,6 +83,7 @@ public class Hero {
     private Weapon currentWeapon;
     private int money;
     private Shop shop;
+    private boolean sleep;
 
     public Skill[] getSkills() {
         return skills;
@@ -141,6 +143,7 @@ public class Hero {
         this.angle = 0.0f;
         this.enginePower = 750.0f;
         this.hpMax = 100;
+        this.sleep = false;
         if (heroSettings == null) {
             // новый игрок
             this.hp = this.hpMax;
@@ -185,6 +188,18 @@ public class Hero {
         strBuilder.append("MONEY: ").append(money).append("\n");
         strBuilder.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
         strBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        if (sleep) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (gc.isWaitingNewLevel()) {
+            font.draw(batch, "Level " + gc.getLevel(), 0, 960, ScreenManager.SCREEN_WIDTH, Align.center, false);
+            sleep = true;
+        }
         font.draw(batch, strBuilder, 20, 1060);
     }
 

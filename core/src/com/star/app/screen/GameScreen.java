@@ -59,11 +59,6 @@ public class GameScreen extends AbstractScreen {
         this.worldRenderer = new WorldRenderer(gameController, batch);
     }
 
-    public void writeLabel(String text) {
-        font24.draw(batch, text, 0, 40, ScreenManager.SCREEN_WIDTH, Align.center, false);
-        // в рендере нужно ставить?
-    }
-
     @Override
     public void render(float delta) {
         gameController.update(delta);

@@ -27,6 +27,11 @@ public class GameController {
     //private BitmapFont font24;
     private SpriteBatch batch;
     private GameScreen gameScreen;
+    private boolean waitingNewLevel;
+
+    public boolean isWaitingNewLevel() {
+        return waitingNewLevel;
+    }
 
     public Stage getStage() {
         return stage;
@@ -56,10 +61,12 @@ public class GameController {
         return hero;
     }
 
+    public int getLevel() {
+        return level;
+    }
 
     public GameController(SpriteBatch batch, int level, int score, int hp, int money, Weapon weapon, Hero.Skill[] skills, Shop shop, GameScreen gameScreen) {
         this.background = new Background(this);
-//        this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
         this.gameScreen = gameScreen;
         this.batch = batch;
 
@@ -69,7 +76,6 @@ public class GameController {
             this.hero = new Hero(this, "PLAYER1", new HeroSettings(score, hp, money, weapon, skills, shop));
         }
 
-
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
@@ -78,6 +84,7 @@ public class GameController {
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
         this.level = level;
+        this.waitingNewLevel = false;
 
         Gdx.input.setInputProcessor(stage);
         createAsteroids();
@@ -101,17 +108,15 @@ public class GameController {
         if(!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
         }
-        if (asteroidController.getActiveList().size() == 0) {
-            level ++;
-//            font24.draw(batch, "Level " + level, 0, 40, ScreenManager.SCREEN_WIDTH, Align.center, false);
-            gameScreen.writeLabel("Level " + level);
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+
+        if (waitingNewLevel) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level, hero.getHeroSettings());
         }
+        if (asteroidController.getActiveList().size() == 0) {
+            waitingNewLevel = true;
+            level ++;
+        }
+
         stage.act(dt);
     }
 
