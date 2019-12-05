@@ -148,6 +148,7 @@ public class Hero {
             // новый игрок
             this.hp = this.hpMax;
             this.money = 1000;
+            this.createSkillsTable();
             this.currentWeapon = new Weapon(
                     gc, this, "Laser", 0.2f, 1, 500.0f, 320,
                     new Vector3[]{
@@ -165,15 +166,15 @@ public class Hero {
             this.currentWeapon = weapon;
             this.score = heroSettings.getScore();
             this.skills = heroSettings.getSkills();
-            Shop shop = heroSettings.getShop();
+            //Shop shop = new Shop(this);
             //shop.setHero(this);
-            this.shop = shop;
+            //this.shop = shop;
         }
 
         this.strBuilder = new StringBuilder();
         this.hitArea = new Circle(position, 26.0f);
         this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);
-        this.createSkillsTable();
+
         this.shop = new Shop(this);
     }
 
