@@ -2,11 +2,15 @@ package com.star.app.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Align;
+import com.star.app.screen.GameScreen;
 import com.star.app.screen.ScreenManager;
+import com.star.app.screen.utils.Assets;
 
 import static java.lang.Math.*;
 
@@ -20,6 +24,14 @@ public class GameController {
     private Hero hero;
     private Vector2 tmpVec;
     private Stage stage;
+    //private BitmapFont font24;
+    private SpriteBatch batch;
+    private GameScreen gameScreen;
+    private boolean waitingNewLevel;
+
+    public boolean isWaitingNewLevel() {
+        return waitingNewLevel;
+    }
 
     public Stage getStage() {
         return stage;
@@ -49,9 +61,21 @@ public class GameController {
         return hero;
     }
 
-    public GameController(SpriteBatch batch) {
+    public int getLevel() {
+        return level;
+    }
+
+    public GameController(SpriteBatch batch, int level, int score, int hp, int money, Weapon weapon, Hero.Skill[] skills, Shop shop, GameScreen gameScreen) {
         this.background = new Background(this);
-        this.hero = new Hero(this, "PLAYER1");
+        this.gameScreen = gameScreen;
+        this.batch = batch;
+
+        if (weapon == null){
+            this.hero = new Hero(this, "PLAYER1", null);
+        }else {
+            this.hero = new Hero(this, "PLAYER1", new HeroSettings(score, hp, money, weapon, skills, shop));
+        }
+
         this.asteroidController = new AsteroidController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
@@ -59,11 +83,17 @@ public class GameController {
         this.tmpVec = new Vector2(0.0f, 0.0f);
         this.stage = new Stage(ScreenManager.getInstance().getViewport(), batch);
         this.stage.addActor(hero.getShop());
-        this.level = 1;
+        this.level = level;
+        this.waitingNewLevel = false;
+
         Gdx.input.setInputProcessor(stage);
-        for (int i = 0; i < 2; i++) {
+        createAsteroids();
+    }
+
+    void createAsteroids() {
+        for (int i = 0; i < 1; i++) {
             this.asteroidController.setup(MathUtils.random(0, ScreenManager.SCREEN_WIDTH), MathUtils.random(0, ScreenManager.SCREEN_HEIGHT),
-                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
+                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f, level);
         }
     }
 
@@ -78,6 +108,15 @@ public class GameController {
         if(!hero.isAlive()) {
             ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAMEOVER, hero);
         }
+
+        if (waitingNewLevel) {
+            ScreenManager.getInstance().changeScreen(ScreenManager.ScreenType.GAME, level, hero.getHeroSettings());
+        }
+        if (asteroidController.getActiveList().size() == 0) {
+            waitingNewLevel = true;
+            level ++;
+        }
+
         stage.act(dt);
     }
 
@@ -116,7 +155,7 @@ public class GameController {
                 hero.getPosition().mulAdd(tmpVec, halfOverLen);
                 a.getPosition().mulAdd(tmpVec, -halfOverLen);
                 hit(hero, a);
-                if (a.takeDamage(2)) {
+                if (a.takeDamage(2, level)) {
                     hero.addScore(a.getHpMax() * 10);
                 }
                 hero.takeDamage(2);
@@ -140,7 +179,7 @@ public class GameController {
                     );
 
                     b.deactivate();
-                    if (a.takeDamage(1)) {
+                    if (a.takeDamage(1, level)) {
                         hero.addScore(a.getHpMax() * 100);
                         for (int k = 0; k < 3; k++) {
                             powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() / 4.0f);
@@ -148,6 +187,15 @@ public class GameController {
                     }
                     break;
                 }
+            }
+        }
+        // при приближении к power-ups они начинали лететь в сторону игрока
+        for (int i = 0; i < powerUpsController.getActiveList().size(); i++) {
+            PowerUp p = powerUpsController.getActiveList().get(i);
+            float dst = p.getPosition().dst(hero.getPosition());
+            if (dst<100) {
+                Vector2 vector2 = hero.getPosition().cpy().sub(p.getPosition());
+                p.getPosition().mulAdd(vector2, 0.05f);
             }
         }
 
