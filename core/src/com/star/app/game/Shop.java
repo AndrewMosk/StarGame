@@ -16,15 +16,11 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.star.app.screen.utils.Assets;
 
 public class Shop extends Group {
-    //private Hero hero;
+    private Hero hero;
     private BitmapFont font24;
 
-//    public void setHero(Hero hero) {
-//        this.hero = hero;
-//    }
-
     public Shop(final Hero hero) {
-        //this.hero = hero;
+        this.hero = hero;
         this.font24 = Assets.getInstance().getAssetManager().get("fonts/font24.ttf");
 
         Pixmap pixmap = new Pixmap(400, 400, Pixmap.Format.RGB888);
