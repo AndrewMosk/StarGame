@@ -25,7 +25,7 @@ public class Bot implements Poolable {
     private Vector2 tmpVector;
     private Circle hitArea;
     private boolean active;
-    private Vector2 positionHero;
+    private Hero hero;
 
     @Override
     public boolean isActive() {
@@ -69,7 +69,7 @@ public class Bot implements Poolable {
 
     }
 
-    public void activate(float x, float y, float vx, float vy) {
+    public void activate(float x, float y, float vx, float vy, Hero hero) {
         this.position.set(x, y);
         this.velocity.set(0.0f, 0.0f);
         this.hpMax = 15;
@@ -79,6 +79,7 @@ public class Bot implements Poolable {
         this.active = true;
         this.hitArea.setRadius(26);
         this.enginePower = 500.0f;
+        this.hero = hero;
 
         this.currentWeapon = new BotWeapon(
                 gc, this, "Laser", 0.2f, 1, 500.0f, 320,
@@ -106,35 +107,25 @@ public class Bot implements Poolable {
             velocity.nor().scl(300.0f);
         }
 
+        // поведение бота
+        tmpVector.set(hero.getPosition()).sub(position);
+        if (tmpVector.len()<2000) {
+            angle = tmpVector.angle();
+            tryToFire();
+        }
 
-        // вот тут, на сколько я понимаю, должны быть мозги бота
-//        if (Gdx.input.isKeyPressed(keysControl.fire)) {
-//            tryToFire();
-//        }
-//        if (Gdx.input.isKeyPressed(keysControl.left)) {
-//            angle += 180.0f * dt;
-//        }
-//        if (Gdx.input.isKeyPressed(keysControl.right)) {
-//            angle -= 180.0f * dt;
-//        }
-//        if (Gdx.input.isKeyPressed(keysControl.forward)) {
-//            velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
-//            velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
-//        }
-//        if (Gdx.input.isKeyPressed(keysControl.backward)) {
-//            velocity.x -= (float) Math.cos(Math.toRadians(angle)) * enginePower * dt / 2.0f;
-//            velocity.y -= (float) Math.sin(Math.toRadians(angle)) * enginePower * dt / 2.0f;
-//        }
+        float dst = hero.getPosition().dst(position);
 
-        velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
-        velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
+        if (dst < 300) {
+            velocity.x = 0.0f;
+            velocity.y = 0.0f;
+        } else {
+            velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
+            velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
+        }
 
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);
-
-        // угол атаки на героя
-        //angle += rotationSpeed * dt;
-
 
         // боту тоже нужно пламя из движка :-)
         if (velocity.len() > 50.0f) {

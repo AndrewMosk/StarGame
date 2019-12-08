@@ -187,6 +187,17 @@ public class Hero{
             }
         }
 
+        batch.setColor(Color.ORANGE);
+        for (int i = 0; i < gc.getBotController().getActiveList().size(); i++) {
+            Bot bot = gc.getBotController().getActiveList().get(i);
+            float dst = position.dst(bot.getPosition());
+            if (dst < 3000.0f) {
+                tmpVector.set(bot.getPosition()).sub(this.position);
+                tmpVector.scl(160.0f / 3000.0f);
+                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
+            }
+        }
+
         batch.setColor(Color.WHITE);
         for (int i = 0; i < 120; i++) {
             batch.draw(starTexture, mapX + 160.0f * MathUtils.cosDeg(360.0f / 120.0f * i) - 8, mapY + 160.0f * MathUtils.sinDeg(360.0f / 120.0f * i) - 8);

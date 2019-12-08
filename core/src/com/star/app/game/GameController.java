@@ -88,8 +88,8 @@ public class GameController {
         this.stage.addActor(hero.getShop());
         this.level = 1;
         Gdx.input.setInputProcessor(stage);
-        generateTwoBigAsteroids();
-        generateBots(200);
+        //generateTwoBigAsteroids();
+        generateBots(1);
         this.msg = "Level 1";
         this.msgTimer = 3.0f;
         this.music = Assets.getInstance().getAssetManager().get("audio/Music.mp3");
@@ -100,12 +100,12 @@ public class GameController {
     public void generateBots(int amount) {
         for (int i = 0; i < amount; i++) {
             this.botController.setup(MathUtils.random(0, GameController.SPACE_WIDTH), MathUtils.random(0, GameController.SPACE_HEIGHT),
-                    MathUtils.random(-500.0f, 500.0f), MathUtils.random(-500.0f, 500.0f));
+                    MathUtils.random(-500.0f, 500.0f), MathUtils.random(-500.0f, 500.0f), hero);
         }
     }
 
     public void generateTwoBigAsteroids() {
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 50; i++) {
             this.asteroidController.setup(MathUtils.random(0, GameController.SPACE_WIDTH), MathUtils.random(0, GameController.SPACE_HEIGHT),
                     MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 0.6f);
         }
@@ -262,17 +262,19 @@ public class GameController {
             for (int j = 0; j < botController.getActiveList().size(); j++) {
                 Bot bot = botController.getActiveList().get(j);
 
-                if (bot.getHitArea().contains(bullet.getPosition())) {
-                    hittingEffect(bullet);
+                if (bullet.isHeroBullet()) {
+                    if (bot.getHitArea().contains(bullet.getPosition())) {
+                        hittingEffect(bullet);
 
-                    bullet.deactivate();
-                    if (bot.takeDamage(1)) {
-                        hero.addScore(bot.getHpMax() * 100);
-                        for (int k = 0; k < 3; k++) {
-                            powerUpsController.setup(bot.getPosition().x, bot.getPosition().y, 1.0f / 2.0f);
+                        bullet.deactivate();
+                        if (bot.takeDamage(1)) {
+                            hero.addScore(bot.getHpMax() * 100);
+                            for (int k = 0; k < 3; k++) {
+                                powerUpsController.setup(bot.getPosition().x, bot.getPosition().y, 1.0f / 2.0f);
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
             }
         }
