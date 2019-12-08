@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Hero {
+public class Hero{
     public class Skill {
         private int level;
         private int maxLevel;
@@ -156,11 +156,6 @@ public class Hero {
                         new Vector3(24, 90, 0),
                         new Vector3(24, -90, 0)
                 }
-//                new Vector3[]{
-//                        new Vector3(28, 0, 0),
-//                        new Vector3(28, 90, 20),
-//                        new Vector3(28, -90, -20)
-//                }
         );
     }
 

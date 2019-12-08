@@ -20,6 +20,7 @@ public class GameController {
     private int level;
     private Background background;
     private AsteroidController asteroidController;
+    private BotController botController;
     private BulletController bulletController;
     private ParticleController particleController;
     private PowerUpsController powerUpsController;
@@ -62,6 +63,10 @@ public class GameController {
         return particleController;
     }
 
+    public BotController getBotController() {
+        return botController;
+    }
+
     public Hero getHero() {
         return hero;
     }
@@ -74,6 +79,7 @@ public class GameController {
         this.background = new Background(this);
         this.hero = new Hero(this, "PLAYER1");
         this.asteroidController = new AsteroidController(this);
+        this.botController = new BotController(this);
         this.bulletController = new BulletController(this);
         this.particleController = new ParticleController();
         this.powerUpsController = new PowerUpsController(this);
@@ -83,11 +89,19 @@ public class GameController {
         this.level = 1;
         Gdx.input.setInputProcessor(stage);
         generateTwoBigAsteroids();
+        generateBots(200);
         this.msg = "Level 1";
         this.msgTimer = 3.0f;
         this.music = Assets.getInstance().getAssetManager().get("audio/Music.mp3");
         this.music.setLooping(true);
         this.music.play();
+    }
+
+    public void generateBots(int amount) {
+        for (int i = 0; i < amount; i++) {
+            this.botController.setup(MathUtils.random(0, GameController.SPACE_WIDTH), MathUtils.random(0, GameController.SPACE_HEIGHT),
+                    MathUtils.random(-500.0f, 500.0f), MathUtils.random(-500.0f, 500.0f));
+        }
     }
 
     public void generateTwoBigAsteroids() {
@@ -101,6 +115,7 @@ public class GameController {
         msgTimer -= dt;
         background.update(dt);
         hero.update(dt);
+        botController.update(dt);
         asteroidController.update(dt);
         bulletController.update(dt);
         particleController.update(dt);
