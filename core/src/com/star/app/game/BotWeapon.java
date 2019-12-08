@@ -65,7 +65,7 @@ public class BotWeapon {
                 y = bot.getPosition().y + slots[i].x * MathUtils.sinDeg(bot.getAngle() + slots[i].y);
                 vx = bot.getVelocity().x + bulletSpeed * MathUtils.cosDeg(bot.getAngle() + slots[i].z);
                 vy = bot.getVelocity().y + bulletSpeed * MathUtils.sinDeg(bot.getAngle() + slots[i].z);
-                gc.getBulletController().setup(x, y, vx, vy, bot.getAngle() + slots[i].z);
+                gc.getBulletController().setup(x, y, vx, vy, bot.getAngle() + slots[i].z, false);
             }
         }
     }

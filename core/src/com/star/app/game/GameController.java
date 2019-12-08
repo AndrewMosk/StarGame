@@ -131,29 +131,52 @@ public class GameController {
         stage.act(dt);
     }
 
-    public void hit(Hero h, Asteroid a) {
+    public void hit(Hero h, Asteroid a, Bot b) {
         // h - 1
         // a - 2
-        float v1 = h.getVelocity().len();
-        float v2 = a.getVelocity().len();
+        if (!(a ==null)) {
+            float v1 = h.getVelocity().len();
+            float v2 = a.getVelocity().len();
 
-        float m1 = 0.1f;
-        float m2 = a.getScale();
+            float m1 = 0.1f;
+            float m2 = a.getScale();
 
-        float th1 = h.getVelocity().angleRad();
-        float th2 = a.getVelocity().angleRad();
+            float th1 = h.getVelocity().angleRad();
+            float th2 = a.getVelocity().angleRad();
 
-        float phi1 = tmpVec.set(a.getPosition()).sub(h.getPosition()).angleRad();
-        float phi2 = tmpVec.set(h.getPosition()).sub(a.getPosition()).angleRad();
+            float phi1 = tmpVec.set(a.getPosition()).sub(h.getPosition()).angleRad();
+            float phi2 = tmpVec.set(h.getPosition()).sub(a.getPosition()).angleRad();
 
-        float v1xN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * cos(phi1) + v1 * sin(th1 - phi1) * cos(phi1 + PI / 2.0f));
-        float v1yN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * sin(phi1) + v1 * sin(th1 - phi1) * sin(phi1 + PI / 2.0f));
+            float v1xN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * cos(phi1) + v1 * sin(th1 - phi1) * cos(phi1 + PI / 2.0f));
+            float v1yN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * sin(phi1) + v1 * sin(th1 - phi1) * sin(phi1 + PI / 2.0f));
 
-        float v2xN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * cos(phi2) + v2 * sin(th2 - phi2) * cos(phi2 + PI / 2.0f));
-        float v2yN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * sin(phi2) + v2 * sin(th2 - phi2) * sin(phi2 + PI / 2.0f));
+            float v2xN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * cos(phi2) + v2 * sin(th2 - phi2) * cos(phi2 + PI / 2.0f));
+            float v2yN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * sin(phi2) + v2 * sin(th2 - phi2) * sin(phi2 + PI / 2.0f));
 
-        h.getVelocity().set(v1xN, v1yN);
-        a.getVelocity().set(v2xN, v2yN);
+            h.getVelocity().set(v1xN, v1yN);
+            a.getVelocity().set(v2xN, v2yN);
+        }else {
+            float v1 = h.getVelocity().len();
+            float v2 = b.getVelocity().len();
+
+            float m1 = 0.1f;
+            float m2 = 1;
+
+            float th1 = h.getVelocity().angleRad();
+            float th2 = b.getVelocity().angleRad();
+
+            float phi1 = tmpVec.set(b.getPosition()).sub(h.getPosition()).angleRad();
+            float phi2 = tmpVec.set(h.getPosition()).sub(b.getPosition()).angleRad();
+
+            float v1xN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * cos(phi1) + v1 * sin(th1 - phi1) * cos(phi1 + PI / 2.0f));
+            float v1yN = (float) (((v1 * cos(th1 - phi1) * (m1 - m2) + 2 * m2 * v2 * cos(th2 - phi1)) / (m1 + m2)) * sin(phi1) + v1 * sin(th1 - phi1) * sin(phi1 + PI / 2.0f));
+
+            float v2xN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * cos(phi2) + v2 * sin(th2 - phi2) * cos(phi2 + PI / 2.0f));
+            float v2yN = (float) (((v2 * cos(th2 - phi2) * (m2 - m1) + 2 * m1 * v1 * cos(th1 - phi2)) / (m2 + m1)) * sin(phi2) + v2 * sin(th2 - phi2) * sin(phi2 + PI / 2.0f));
+
+            h.getVelocity().set(v1xN, v1yN);
+            b.getVelocity().set(v2xN, v2yN);
+        }
     }
 
     public void checkCollisions() {
@@ -165,7 +188,7 @@ public class GameController {
                 tmpVec.set(hero.getPosition()).sub(a.getPosition()).nor();
                 hero.getPosition().mulAdd(tmpVec, halfOverLen);
                 a.getPosition().mulAdd(tmpVec, -halfOverLen);
-                hit(hero, a);
+                hit(hero, a, null);
                 if (a.takeDamage(2)) {
                     hero.addScore(a.getHpMax() * 10);
                 }
@@ -180,14 +203,7 @@ public class GameController {
 
                 if (a.getHitArea().contains(b.getPosition())) {
 
-                    particleController.setup(
-                            b.getPosition().x + MathUtils.random(-4, 4), b.getPosition().y + MathUtils.random(-4, 4),
-                            b.getVelocity().x * -0.3f + MathUtils.random(-30, 30), b.getVelocity().y * -0.3f + MathUtils.random(-30, 30),
-                            0.2f,
-                            2.2f, 1.7f,
-                            1.0f, 1.0f, 1.0f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 0.0f
-                    );
+                    hittingEffect(b);
 
                     b.deactivate();
                     if (a.takeDamage(1)) {
@@ -209,6 +225,68 @@ public class GameController {
                 p.deactivate();
             }
         }
+
+        // работа с ботом
+        // столкновения
+        for (int i = 0; i < botController.getActiveList().size(); i++) {
+            Bot bot = botController.getActiveList().get(i);
+            if (bot.getHitArea().overlaps(hero.getHitArea())) {
+                float dst = bot.getPosition().dst(hero.getPosition());
+                float halfOverLen = (bot.getHitArea().radius + hero.getHitArea().radius - dst) / 2.0f;
+                tmpVec.set(hero.getPosition()).sub(bot.getPosition()).nor();
+                hero.getPosition().mulAdd(tmpVec, halfOverLen);
+                bot.getPosition().mulAdd(tmpVec, -halfOverLen);
+                hit(hero, null, bot);
+                if (bot.takeDamage(2)) {
+                    hero.addScore(bot.getHpMax() * 10);
+                }
+                hero.takeDamage(2);
+            }
+        }
+
+
+
+        // попадания в бота и игрока
+        for (int i = 0; i < bulletController.getActiveList().size(); i++) {
+            Bullet bullet = bulletController.getActiveList().get(i);
+
+            if (!bullet.isHeroBullet()) {
+                if (hero.getHitArea().contains(bullet.getPosition())) {
+                    hittingEffect(bullet);
+                    bullet.deactivate();
+                    hero.takeDamage(1);
+                }
+            }
+
+
+            for (int j = 0; j < botController.getActiveList().size(); j++) {
+                Bot bot = botController.getActiveList().get(j);
+
+                if (bot.getHitArea().contains(bullet.getPosition())) {
+                    hittingEffect(bullet);
+
+                    bullet.deactivate();
+                    if (bot.takeDamage(1)) {
+                        hero.addScore(bot.getHpMax() * 100);
+                        for (int k = 0; k < 3; k++) {
+                            powerUpsController.setup(bot.getPosition().x, bot.getPosition().y, 1.0f / 2.0f);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    public void hittingEffect(Bullet bullet) {
+        particleController.setup(
+                bullet.getPosition().x + MathUtils.random(-4, 4), bullet.getPosition().y + MathUtils.random(-4, 4),
+                bullet.getVelocity().x * -0.3f + MathUtils.random(-30, 30), bullet.getVelocity().y * -0.3f + MathUtils.random(-30, 30),
+                0.2f,
+                2.2f, 1.7f,
+                1.0f, 1.0f, 1.0f, 1.0f,
+                0.0f, 0.0f, 1.0f, 0.0f
+        );
     }
 
     public void dispose() {

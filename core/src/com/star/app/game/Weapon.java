@@ -66,7 +66,7 @@ public class Weapon {
                 y = hero.getPosition().y + slots[i].x * MathUtils.sinDeg(hero.getAngle() + slots[i].y);
                 vx = hero.getVelocity().x + bulletSpeed * MathUtils.cosDeg(hero.getAngle() + slots[i].z);
                 vy = hero.getVelocity().y + bulletSpeed * MathUtils.sinDeg(hero.getAngle() + slots[i].z);
-                gc.getBulletController().setup(x, y, vx, vy, hero.getAngle() + slots[i].z);
+                gc.getBulletController().setup(x, y, vx, vy, hero.getAngle() + slots[i].z, true);
             }
         }
     }

@@ -25,10 +25,19 @@ public class Bot implements Poolable {
     private Vector2 tmpVector;
     private Circle hitArea;
     private boolean active;
+    private Vector2 positionHero;
 
     @Override
     public boolean isActive() {
         return active;
+    }
+
+    public Circle getHitArea() {
+        return hitArea;
+    }
+
+    public int getHpMax() {
+        return hpMax;
     }
 
     public float getAngle() {
@@ -62,7 +71,7 @@ public class Bot implements Poolable {
 
     public void activate(float x, float y, float vx, float vy) {
         this.position.set(x, y);
-        this.velocity.set(vx, vy);
+        this.velocity.set(0.0f, 0.0f);
         this.hpMax = 15;
         this.hp = this.hpMax;
         this.angle = MathUtils.random(0.0f, 360.0f);
@@ -93,6 +102,10 @@ public class Bot implements Poolable {
     public void update(float dt) {
         fireTimer += dt;
 
+        if (velocity.len() > 300.0f) {
+            velocity.nor().scl(300.0f);
+        }
+
 
         // вот тут, на сколько я понимаю, должны быть мозги бота
 //        if (Gdx.input.isKeyPressed(keysControl.fire)) {
@@ -112,6 +125,9 @@ public class Bot implements Poolable {
 //            velocity.x -= (float) Math.cos(Math.toRadians(angle)) * enginePower * dt / 2.0f;
 //            velocity.y -= (float) Math.sin(Math.toRadians(angle)) * enginePower * dt / 2.0f;
 //        }
+
+        velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
+        velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
 
         position.mulAdd(velocity, dt);
         hitArea.setPosition(position);

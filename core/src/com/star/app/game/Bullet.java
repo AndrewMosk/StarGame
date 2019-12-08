@@ -11,6 +11,11 @@ public class Bullet implements Poolable {
     private Vector2 velocity;
     private float angle;
     private boolean active;
+    private boolean heroBullet;
+
+    public boolean isHeroBullet() {
+        return heroBullet;
+    }
 
     public Vector2 getPosition() {
         return position;
@@ -40,11 +45,12 @@ public class Bullet implements Poolable {
         this.active = false;
     }
 
-    public void activate(float x, float y, float vx, float vy, float angle) {
+    public void activate(float x, float y, float vx, float vy, float angle, boolean heroBullet) {
         this.position.set(x, y);
         this.velocity.set(vx, vy);
         this.active = true;
         this.angle = angle;
+        this.heroBullet = heroBullet;
     }
 
     public void update(float dt) {
