@@ -88,8 +88,8 @@ public class GameController {
         this.stage.addActor(hero.getShop());
         this.level = 1;
         Gdx.input.setInputProcessor(stage);
-        //generateTwoBigAsteroids();
-        generateBots(1);
+        generateTwoBigAsteroids();
+        generateBots(5);
         this.msg = "Level 1";
         this.msgTimer = 3.0f;
         this.music = Assets.getInstance().getAssetManager().get("audio/Music.mp3");
@@ -244,8 +244,6 @@ public class GameController {
             }
         }
 
-
-
         // попадания в бота и игрока
         for (int i = 0; i < bulletController.getActiveList().size(); i++) {
             Bullet bullet = bulletController.getActiveList().get(i);
@@ -257,7 +255,6 @@ public class GameController {
                     hero.takeDamage(1);
                 }
             }
-
 
             for (int j = 0; j < botController.getActiveList().size(); j++) {
                 Bot bot = botController.getActiveList().get(j);

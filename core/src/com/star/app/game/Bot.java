@@ -10,7 +10,7 @@ import com.star.app.game.helpers.Poolable;
 import com.star.app.screen.ScreenManager;
 import com.star.app.screen.utils.Assets;
 
-public class Bot implements Poolable {
+public class Bot implements Poolable, Shooting {
 
     private GameController gc;
     private TextureRegion texture;
@@ -21,7 +21,7 @@ public class Bot implements Poolable {
     private float angle;
     private float enginePower;
     private float fireTimer;
-    private BotWeapon currentWeapon;
+    private Weapon currentWeapon;
     private Vector2 tmpVector;
     private Circle hitArea;
     private boolean active;
@@ -40,20 +40,19 @@ public class Bot implements Poolable {
         return hpMax;
     }
 
+    @Override
     public float getAngle() {
         return angle;
     }
 
+    @Override
     public Vector2 getPosition() {
         return position;
     }
 
+    @Override
     public Vector2 getVelocity() {
         return velocity;
-    }
-
-    public boolean isAlive() {
-        return hp > 0;
     }
 
     public Bot(GameController gc) {
@@ -81,7 +80,7 @@ public class Bot implements Poolable {
         this.enginePower = 500.0f;
         this.hero = hero;
 
-        this.currentWeapon = new BotWeapon(
+        this.currentWeapon = new Weapon(
                 gc, this, "Laser", 0.2f, 1, 500.0f, 320,
                 new Vector3[]{
                         new Vector3(24, 90, 0),
@@ -149,7 +148,7 @@ public class Bot implements Poolable {
     public void tryToFire() {
         if (fireTimer > currentWeapon.getFirePeriod()) {
             fireTimer = 0.0f;
-            currentWeapon.fire();
+            currentWeapon.fire(false);
         }
     }
 

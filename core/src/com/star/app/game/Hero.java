@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Hero{
+public class Hero implements Shooting{
     public class Skill {
         private int level;
         private int maxLevel;
@@ -103,6 +103,7 @@ public class Hero{
         money -= amount;
     }
 
+    @Override
     public float getAngle() {
         return angle;
     }
@@ -117,10 +118,12 @@ public class Hero{
         return score;
     }
 
+    @Override
     public Vector2 getPosition() {
         return position;
     }
 
+    @Override
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -263,7 +266,7 @@ public class Hero{
     public void tryToFire() {
         if (fireTimer > currentWeapon.getFirePeriod()) {
             fireTimer = 0.0f;
-            currentWeapon.fire();
+            currentWeapon.fire(true);
         }
     }
 
