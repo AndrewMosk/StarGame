@@ -7,22 +7,13 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.StringBuilder;
-import com.star.app.screen.ScreenManager;
+
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class Hero implements Shooting{
+public class Hero extends Ship {
     public class Skill {
         private int level;
         private int maxLevel;
@@ -69,23 +60,17 @@ public class Hero implements Shooting{
 
     private TextureRegion starTexture;
     private Skill[] skills;
-    private GameController gc;
-    private TextureRegion texture;
     private KeysControl keysControl;
-    private Vector2 position;
-    private Vector2 velocity;
-    private int hp;
-    private int hpMax;
-    private float angle;
-    private float enginePower;
-    private float fireTimer;
     private int score;
     private int scoreView;
-    private Circle hitArea;
-    private Weapon currentWeapon;
     private int money;
     private Shop shop;
-    private Vector2 tmpVector;
+    private StringBuilder tmpStr;
+    private float objectCaptureRadius;
+
+    public float getObjectCaptureRadius() {
+        return objectCaptureRadius;
+    }
 
     public Skill[] getSkills() {
         return skills;
@@ -103,13 +88,6 @@ public class Hero implements Shooting{
         money -= amount;
     }
 
-    @Override
-    public float getAngle() {
-        return angle;
-    }
-
-    private StringBuilder strBuilder;
-
     public void addScore(int amount) {
         score += amount;
     }
@@ -118,43 +96,21 @@ public class Hero implements Shooting{
         return score;
     }
 
-    @Override
-    public Vector2 getPosition() {
-        return position;
-    }
-
-    @Override
-    public Vector2 getVelocity() {
-        return velocity;
-    }
-
-    public Circle getHitArea() {
-        return hitArea;
-    }
-
-    public boolean isAlive() {
-        return hp > 0;
-    }
-
     public Hero(GameController gc, String keysControlPrefix) {
-        this.gc = gc;
+        super(gc, 100);
         this.starTexture = Assets.getInstance().getAtlas().findRegion("star16");
         this.texture = Assets.getInstance().getAtlas().findRegion("ship");
-        this.position = new Vector2(640, 360);
-        this.velocity = new Vector2(0, 0);
-        this.angle = 0.0f;
+        this.changePosition(640, 360);
         this.enginePower = 1500.0f;
-        this.hpMax = 100;
-        this.hp = this.hpMax;
         this.money = 1000;
-        this.strBuilder = new StringBuilder();
-        this.hitArea = new Circle(position, 26.0f);
+        this.tmpStr = new StringBuilder();
         this.keysControl = new KeysControl(OptionsUtils.loadProperties(), keysControlPrefix);
         this.createSkillsTable();
         this.shop = new Shop(this);
-        this.tmpVector = new Vector2(0, 0);
+        this.objectCaptureRadius = 200.0f;
+        this.ownerType = OwnerType.PLAYER;
         this.currentWeapon = new Weapon(
-                gc, this, "Laser", 0.2f, 1, 500.0f, 320,
+                gc, this, "Laser", 0.2f, 1, 1, 320.0f, 500.0f, 320,
                 new Vector3[]{
                         new Vector3(24, 90, 0),
                         new Vector3(24, -90, 0)
@@ -162,23 +118,29 @@ public class Hero implements Shooting{
         );
     }
 
-
-    public void render(SpriteBatch batch) {
-        batch.draw(texture, position.x - 32, position.y - 32, 32, 32, 64, 64, 1, 1, angle);
-    }
-
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
-        strBuilder.clear();
-        strBuilder.append("SCORE: ").append(scoreView).append("\n");
-        strBuilder.append("MONEY: ").append(money).append("\n");
-        strBuilder.append("HP: ").append(hp).append(" / ").append(hpMax).append("\n");
-        strBuilder.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
-        font.draw(batch, strBuilder, 20, 1060);
+        tmpStr.setLength(0);
+        tmpStr.append("SCORE: ").append(scoreView).append("\n");
+        tmpStr.append("MONEY: ").append(money).append("\n");
+        tmpStr.append("HP: ").append(hp.getCurrent()).append(" / ").append(hp.getMax()).append("\n");
+        tmpStr.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        font.draw(batch, tmpStr, 20, 1060);
 
         int mapX = 1700;
         int mapY = 800;
         batch.setColor(Color.GREEN);
         batch.draw(starTexture, mapX - 24, mapY - 24, 48, 48);
+
+        {
+            float dst = position.dst(gc.getBot().getPosition());
+            if (dst < 3000.0f) {
+                tmpVector.set(gc.getBot().getPosition()).sub(this.position);
+                tmpVector.scl(160.0f / 3000.0f);
+                batch.setColor(Color.PURPLE);
+                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
+            }
+        }
+
         batch.setColor(Color.RED);
         for (int i = 0; i < gc.getAsteroidController().getActiveList().size(); i++) {
             Asteroid a = gc.getAsteroidController().getActiveList().get(i);
@@ -186,18 +148,8 @@ public class Hero implements Shooting{
             if (dst < 3000.0f) {
                 tmpVector.set(a.getPosition()).sub(this.position);
                 tmpVector.scl(160.0f / 3000.0f);
-                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
-            }
-        }
-
-        batch.setColor(Color.ORANGE);
-        for (int i = 0; i < gc.getBotController().getActiveList().size(); i++) {
-            Bot bot = gc.getBotController().getActiveList().get(i);
-            float dst = position.dst(bot.getPosition());
-            if (dst < 3000.0f) {
-                tmpVector.set(bot.getPosition()).sub(this.position);
-                tmpVector.scl(160.0f / 3000.0f);
-                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
+                float pointScale = a.getScale() * 2.0f;
+                batch.draw(starTexture, mapX + tmpVector.x - 8, mapY + tmpVector.y - 8, 8, 8,16,16,pointScale,pointScale,0.0f);
             }
         }
 
@@ -208,39 +160,29 @@ public class Hero implements Shooting{
     }
 
     public void update(float dt) {
-        if (velocity.len() > 1000.0f) {
-            velocity.nor().scl(1000.0f);
-        }
-        fireTimer += dt;
+        super.update(dt);
+
         updateScore(dt);
 
         if (Gdx.input.isKeyPressed(keysControl.fire)) {
-            tryToFire();
+            currentWeapon.tryToFire();
         }
         if (Gdx.input.isKeyPressed(keysControl.left)) {
-            angle += 180.0f * dt;
+            rotate(180.0f, dt);
         }
         if (Gdx.input.isKeyPressed(keysControl.right)) {
-            angle -= 180.0f * dt;
+            rotate(-180.0f, dt);
         }
         if (Gdx.input.isKeyPressed(keysControl.forward)) {
-            velocity.x += (float) Math.cos(Math.toRadians(angle)) * enginePower * dt;
-            velocity.y += (float) Math.sin(Math.toRadians(angle)) * enginePower * dt;
+            accelerate(dt);
         }
         if (Gdx.input.isKeyPressed(keysControl.backward)) {
-            velocity.x -= (float) Math.cos(Math.toRadians(angle)) * enginePower * dt / 2.0f;
-            velocity.y -= (float) Math.sin(Math.toRadians(angle)) * enginePower * dt / 2.0f;
+            brake(dt);
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.U)) {
             shop.setVisible(true);
         }
-        position.mulAdd(velocity, dt);
-        hitArea.setPosition(position);
-        float stopKoef = 1.0f - 2.0f * dt;
-        if (stopKoef < 0.0f) {
-            stopKoef = 0.0f;
-        }
-        velocity.scl(stopKoef);
+
         if (velocity.len() > 50.0f) {
             float bx, by;
             bx = position.x - 28.0f * (float) Math.cos(Math.toRadians(angle));
@@ -255,33 +197,6 @@ public class Hero implements Shooting{
                         1.0f, 1.0f, 1.0f, 0.0f
                 );
             }
-        }
-        checkSpaceBorders();
-    }
-
-    public void takeDamage(int amount) {
-        hp -= amount;
-    }
-
-    public void tryToFire() {
-        if (fireTimer > currentWeapon.getFirePeriod()) {
-            fireTimer = 0.0f;
-            currentWeapon.fire(true);
-        }
-    }
-
-    public void checkSpaceBorders() {
-        if (position.x < hitArea.radius) {
-            position.x += GameController.SPACE_WIDTH;
-        }
-        if (position.x > GameController.SPACE_WIDTH - hitArea.radius) {
-            position.x -= GameController.SPACE_WIDTH;
-        }
-        if (position.y < hitArea.radius) {
-            position.y = GameController.SPACE_HEIGHT - hitArea.radius - 1;
-        }
-        if (position.y > GameController.SPACE_HEIGHT - hitArea.radius) {
-            position.y = hitArea.radius + 1;
         }
     }
 
@@ -301,16 +216,21 @@ public class Hero implements Shooting{
     public void consume(PowerUp p) {
         switch (p.getType()) {
             case MEDKIT:
-                hp += p.getPower();
-                if (hp > hpMax) {
-                    hp = hpMax;
-                }
+                tmpStr.setLength(0);
+                tmpStr.append("HP +").append(hp.increase(p.getPower()));
+                gc.getInfoController().setup(p.getPosition().x, p.getPosition().y, tmpStr, Color.GREEN);
                 break;
             case AMMOS:
                 currentWeapon.addAmmos(p.getPower());
+                tmpStr.setLength(0);
+                tmpStr.append("AMMOS +").append(p.getPower());
+                gc.getInfoController().setup(p.getPosition().x, p.getPosition().y, tmpStr, Color.ORANGE);
                 break;
             case MONEY:
                 money += p.getPower();
+                tmpStr.setLength(0);
+                tmpStr.append("MONEY +").append(p.getPower());
+                gc.getInfoController().setup(p.getPosition().x, p.getPosition().y, tmpStr, Color.YELLOW);
                 break;
         }
     }
@@ -325,12 +245,12 @@ public class Hero implements Shooting{
         this.skills = new Skill[2];
         skills[0] = new Skill("HP",
                 new Runnable[]{
-                        () -> hpMax += 10,
-                        () -> hpMax += 20,
-                        () -> hpMax += 30,
-                        () -> hpMax += 40,
-                        () -> hpMax += 50,
-                        () -> hpMax += 50
+                        () -> hp.increaseMax(10),
+                        () -> hp.increaseMax(20),
+                        () -> hp.increaseMax(30),
+                        () -> hp.increaseMax(40),
+                        () -> hp.increaseMax(50),
+                        () -> hp.increaseMax(50)
                 },
                 new int[]{
                         10,
@@ -346,7 +266,7 @@ public class Hero implements Shooting{
                 new Runnable[]{
                         () -> {
                             this.currentWeapon = new Weapon(
-                                    gc, this, "Laser", 0.3f, 1, 600.0f, 320,
+                                    gc, this, "Laser", 0.3f, 1, 1, 400.0f, 600.0f, 320,
                                     new Vector3[]{
                                             new Vector3(24, 90, 10),
                                             new Vector3(24, 0, 0),
@@ -356,7 +276,7 @@ public class Hero implements Shooting{
                         },
                         () -> {
                             this.currentWeapon = new Weapon(
-                                    gc, this, "Laser", 0.3f, 1, 600.0f, 320,
+                                    gc, this, "Laser", 0.3f, 1, 2, 360.0f, 600.0f, 320,
                                     new Vector3[]{
                                             new Vector3(24, 90, 20),
                                             new Vector3(24, 20, 0),
@@ -367,7 +287,7 @@ public class Hero implements Shooting{
                         },
                         () -> {
                             this.currentWeapon = new Weapon(
-                                    gc, this, "Laser", 0.05f, 2, 600.0f, 32000,
+                                    gc, this, "Laser", 0.05f, 2, 4, 240.0f, 600.0f, 32000,
                                     new Vector3[]{
                                             new Vector3(24, 90, 20),
                                             new Vector3(24, 20, 0),

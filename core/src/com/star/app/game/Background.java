@@ -22,7 +22,7 @@ public class Background {
         }
 
         public void update(float dt) {
-            if(gc != null) {
+            if (gc != null) {
                 position.x += (velocity.x - gc.getHero().getVelocity().x / 4.0f) * dt;
                 position.y += (velocity.y - gc.getHero().getVelocity().y / 4.0f) * dt;
             } else {
@@ -33,6 +33,15 @@ public class Background {
                 position.y = MathUtils.random(-200, ScreenManager.SCREEN_HEIGHT + 200);
                 velocity.x = MathUtils.random(-15, -1);
                 scale = Math.abs(velocity.x) / 15.0f * 0.7f;
+            }
+            if (position.y < -200) {
+                position.y = ScreenManager.SCREEN_HEIGHT + 200;
+            }
+            if (position.y > ScreenManager.SCREEN_HEIGHT + 200) {
+                position.y = -200;
+            }
+            if (position.x > ScreenManager.SCREEN_WIDTH + 200) {
+                position.x = -200;
             }
         }
     }
