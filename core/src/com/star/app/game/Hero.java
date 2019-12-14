@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
+import com.badlogic.gdx.utils.Timer;
 import com.star.app.screen.utils.Assets;
 import com.star.app.screen.utils.OptionsUtils;
 
@@ -67,6 +68,7 @@ public class Hero extends Ship {
     private Shop shop;
     private StringBuilder tmpStr;
     private float objectCaptureRadius;
+    private boolean bgfPowerUp;
 
     public float getObjectCaptureRadius() {
         return objectCaptureRadius;
@@ -118,12 +120,26 @@ public class Hero extends Ship {
         );
     }
 
+    private void timer() {
+        float timeSeconds = 10.0f;
+        timeSeconds -=Gdx.graphics.getRawDeltaTime();
+        if(timeSeconds > 0){
+            tmpStr.append("\n").append("TIMER: ").append(timeSeconds).append("\n");
+        }else {
+            bgfPowerUp = false;
+        }
+    }
+
     public void renderGUI(SpriteBatch batch, BitmapFont font) {
         tmpStr.setLength(0);
         tmpStr.append("SCORE: ").append(scoreView).append("\n");
         tmpStr.append("MONEY: ").append(money).append("\n");
         tmpStr.append("HP: ").append(hp.getCurrent()).append(" / ").append(hp.getMax()).append("\n");
         tmpStr.append("BULLETS: ").append(currentWeapon.getCurBullets()).append(" / ").append(currentWeapon.getMaxBullets()).append("\n");
+        if (bgfPowerUp) {
+            timer();
+        }
+
         font.draw(batch, tmpStr, 20, 1060);
 
         int mapX = 1700;

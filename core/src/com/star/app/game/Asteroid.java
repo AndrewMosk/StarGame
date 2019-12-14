@@ -1,5 +1,6 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
@@ -21,6 +22,7 @@ public class Asteroid implements Poolable {
     private float rotationSpeed;
     private boolean active;
     private Circle hitArea;
+    private boolean superAsteroid;
 
     private final float BASE_SIZE = 256.0f;
     private final float BASE_RADIUS = BASE_SIZE / 2.0f;
@@ -67,20 +69,22 @@ public class Asteroid implements Poolable {
         hp -= amount;
         if (hp <= 0) {
             deactivate();
-            if (scale > 0.9f) {
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-            } else if (scale > 0.25f) {
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
-                gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f);
+            if (!superAsteroid) {
+                if (scale > 0.9f) {
+                    gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, false);
+                    gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, false);
+                } else if (scale > 0.25f) {
+                    gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, false);
+                    gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, false);
+                    gc.getAsteroidController().setup(position.x, position.y, MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), scale - 0.2f, false);
+                }
             }
             return true;
         }
         return false;
     }
 
-    public void activate(float x, float y, float vx, float vy, float scale) {
+    public void activate(float x, float y, float vx, float vy, float scale, boolean superAsteroid) {
         this.position.set(x, y);
         this.velocity.set(vx, vy);
         if (this.velocity.len() < 50.0f) {
@@ -94,15 +98,24 @@ public class Asteroid implements Poolable {
         this.active = true;
         this.scale = scale;
         this.hitArea.setRadius(BASE_RADIUS * scale * 0.9f);
+        this.superAsteroid = superAsteroid;
     }
 
     public void render(SpriteBatch batch) {
+        if (superAsteroid) {
+            batch.setColor(0.0f, 1.0f, 0.0f, 1.0f);
+        }
+
         batch.draw(texture, position.x - 128, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
         if(position.x > GameController.SPACE_WIDTH - ScreenManager.HALF_SCREEN_WIDTH) {
             batch.draw(texture, position.x - 128 - GameController.SPACE_WIDTH, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
         }
         if(position.x < ScreenManager.HALF_SCREEN_WIDTH) {
             batch.draw(texture, position.x - 128 + GameController.SPACE_WIDTH, position.y - 128, 128, 128, 256, 256, scale, scale, angle);
+        }
+
+        if (superAsteroid) {
+            batch.setColor(new Color(255.0f, 255.0f, 255.0f, 1.0f));
         }
     }
 

@@ -106,9 +106,16 @@ public class GameController {
     }
 
     public void generateTwoBigAsteroids() {
-        for (int i = 0; i < 100; i++) {
+        int probability = MathUtils.random(0, 9);
+        boolean superAsteroid;
+        for (int i = 0; i < 10; i++) {
+            superAsteroid = false;
+            if (i == probability) {
+                superAsteroid = true;
+            }
+
             this.asteroidController.setup(MathUtils.random(0, GameController.SPACE_WIDTH), MathUtils.random(0, GameController.SPACE_HEIGHT),
-                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
+                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f, superAsteroid);
         }
     }
 

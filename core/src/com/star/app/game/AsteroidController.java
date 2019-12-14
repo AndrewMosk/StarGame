@@ -1,5 +1,6 @@
 package com.star.app.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.star.app.game.helpers.ObjectPool;
@@ -24,8 +25,8 @@ public class AsteroidController extends ObjectPool<Asteroid> {
         }
     }
 
-    public void setup(float x, float y, float vx, float vy, float scale) {
-        getActiveElement().activate(x, y, vx, vy, scale);
+    public void setup(float x, float y, float vx, float vy, float scale, boolean superAsteroid) {
+        getActiveElement().activate(x, y, vx, vy, scale, superAsteroid);
     }
 
     public void update(float dt) {
