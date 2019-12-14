@@ -21,14 +21,14 @@ public class BulletController extends ObjectPool<Bullet> {
     }
 
     public void render(SpriteBatch batch) {
-        for (int i = 0; i < activeList.size(); i++) {
-            Bullet b = activeList.get(i);
-            batch.draw(bulletTexture, b.getPosition().x - 32, b.getPosition().y - 16, 32, 16, 64, 32, 0.6f, 0.6f, b.getAngle());
-        }
+//        for (int i = 0; i < activeList.size(); i++) {
+//            Bullet b = activeList.get(i);
+//            batch.draw(bulletTexture, b.getPosition().x - 32, b.getPosition().y - 16, 32, 16, 64, 32, 0.6f, 0.6f, b.getAngle());
+//        }
     }
 
-    public void setup(float x, float y, float vx, float vy, float angle, boolean heroBullet) {
-        getActiveElement().activate(x, y, vx, vy, angle, heroBullet);
+    public void setup(Ship owner, String title, float x, float y, float vx, float vy, int damage, float angle, float lifetimeDistance) {
+        getActiveElement().activate(owner, title, x, y, vx, vy, damage, angle, lifetimeDistance);
     }
 
     public void update(float dt) {
