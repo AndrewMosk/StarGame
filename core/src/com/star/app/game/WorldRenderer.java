@@ -66,6 +66,7 @@ public class WorldRenderer {
         gc.getHero().render(batch);
         gc.getAsteroidController().render(batch);
         gc.getBulletController().render(batch);
+        gc.getBotController().render(batch);
         gc.getPowerUpsController().render(batch);
         gc.getParticleController().render(batch);
         batch.end();
@@ -77,7 +78,7 @@ public class WorldRenderer {
         batch.setProjectionMatrix(camera.combined);
 
         batch.begin();
-//        batch.setShader(shaderProgram);
+//        batch.setShader(shaderProgram);;;;;;;;;;;;;
 //        shaderProgram.setUniformf("px", gc.getHero().getPosition().x / ScreenManager.SCREEN_WIDTH);
 //        shaderProgram.setUniformf("py", gc.getHero().getPosition().y / ScreenManager.SCREEN_HEIGHT);
 

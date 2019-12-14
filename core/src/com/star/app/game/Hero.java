@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Hero {
+public class Hero implements Shooting{
     public class Skill {
         private int level;
         private int maxLevel;
@@ -103,6 +103,7 @@ public class Hero {
         money -= amount;
     }
 
+    @Override
     public float getAngle() {
         return angle;
     }
@@ -117,10 +118,12 @@ public class Hero {
         return score;
     }
 
+    @Override
     public Vector2 getPosition() {
         return position;
     }
 
+    @Override
     public Vector2 getVelocity() {
         return velocity;
     }
@@ -156,11 +159,6 @@ public class Hero {
                         new Vector3(24, 90, 0),
                         new Vector3(24, -90, 0)
                 }
-//                new Vector3[]{
-//                        new Vector3(28, 0, 0),
-//                        new Vector3(28, 90, 20),
-//                        new Vector3(28, -90, -20)
-//                }
         );
     }
 
@@ -187,6 +185,17 @@ public class Hero {
             float dst = position.dst(a.getPosition());
             if (dst < 3000.0f) {
                 tmpVector.set(a.getPosition()).sub(this.position);
+                tmpVector.scl(160.0f / 3000.0f);
+                batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
+            }
+        }
+
+        batch.setColor(Color.ORANGE);
+        for (int i = 0; i < gc.getBotController().getActiveList().size(); i++) {
+            Bot bot = gc.getBotController().getActiveList().get(i);
+            float dst = position.dst(bot.getPosition());
+            if (dst < 3000.0f) {
+                tmpVector.set(bot.getPosition()).sub(this.position);
                 tmpVector.scl(160.0f / 3000.0f);
                 batch.draw(starTexture, mapX + tmpVector.x - 16, mapY + tmpVector.y - 16, 32, 32);
             }
@@ -257,7 +266,7 @@ public class Hero {
     public void tryToFire() {
         if (fireTimer > currentWeapon.getFirePeriod()) {
             fireTimer = 0.0f;
-            currentWeapon.fire();
+            currentWeapon.fire(true);
         }
     }
 

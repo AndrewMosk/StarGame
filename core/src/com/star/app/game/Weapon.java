@@ -8,7 +8,7 @@ import com.star.app.screen.utils.Assets;
 
 public class Weapon {
     private GameController gc;
-    private Hero hero;
+    private Shooting shooter;
     private String title;
     private float firePeriod;
     private int damage;
@@ -42,9 +42,9 @@ public class Weapon {
         }
     }
 
-    public Weapon(GameController gc, Hero hero, String title, float firePeriod, int damage, float bulletSpeed, int maxBullets, Vector3[] slots) {
+    public Weapon(GameController gc, Shooting shooter, String title, float firePeriod, int damage, float bulletSpeed, int maxBullets, Vector3[] slots) {
         this.gc = gc;
-        this.hero = hero;
+        this.shooter = shooter;
         this.title = title;
         this.firePeriod = firePeriod;
         this.damage = damage;
@@ -55,18 +55,18 @@ public class Weapon {
         this.shootSound = Assets.getInstance().getAssetManager().get("audio/Shoot.mp3");
     }
 
-    public void fire() {
+    public void fire(boolean heroBullet) {
         if (curBullets > 0) {
             curBullets--;
             shootSound.play();
 
             for (int i = 0; i < slots.length; i++) {
                 float x, y, vx, vy;
-                x = hero.getPosition().x + slots[i].x * MathUtils.cosDeg(hero.getAngle() + slots[i].y);
-                y = hero.getPosition().y + slots[i].x * MathUtils.sinDeg(hero.getAngle() + slots[i].y);
-                vx = hero.getVelocity().x + bulletSpeed * MathUtils.cosDeg(hero.getAngle() + slots[i].z);
-                vy = hero.getVelocity().y + bulletSpeed * MathUtils.sinDeg(hero.getAngle() + slots[i].z);
-                gc.getBulletController().setup(x, y, vx, vy, hero.getAngle() + slots[i].z);
+                x = shooter.getPosition().x + slots[i].x * MathUtils.cosDeg(shooter.getAngle() + slots[i].y);
+                y = shooter.getPosition().y + slots[i].x * MathUtils.sinDeg(shooter.getAngle() + slots[i].y);
+                vx = shooter.getVelocity().x + bulletSpeed * MathUtils.cosDeg(shooter.getAngle() + slots[i].z);
+                vy = shooter.getVelocity().y + bulletSpeed * MathUtils.sinDeg(shooter.getAngle() + slots[i].z);
+                gc.getBulletController().setup(x, y, vx, vy, shooter.getAngle() + slots[i].z, heroBullet);
             }
         }
     }
