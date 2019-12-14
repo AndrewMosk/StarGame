@@ -20,6 +20,10 @@ public class Ship {
     Weapon currentWeapon;
     OwnerType ownerType;
 
+    public int getHp() {
+        return hp.getCurrent();
+    }
+
     public OwnerType getOwnerType() {
         return ownerType;
     }

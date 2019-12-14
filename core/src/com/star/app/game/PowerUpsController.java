@@ -28,9 +28,13 @@ public class PowerUpsController extends ObjectPool<PowerUp> {
         }
     }
 
-    public void setup(float x, float y, float probability) {
-        if (MathUtils.random() <= probability) {
-            getActiveElement().activate(PowerUp.Type.values()[MathUtils.random(0, 2)], x, y, 20);
+    public void setup(float x, float y, float probability, boolean superAsteroid) {
+        if (superAsteroid) {
+            getActiveElement().activate(PowerUp.Type.BFG, x, y, 0);
+        }else {
+            if (MathUtils.random() <= probability) {
+                getActiveElement().activate(PowerUp.Type.values()[MathUtils.random(0, 2)], x, y, 20);
+            }
         }
     }
 

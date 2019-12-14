@@ -27,6 +27,14 @@ public class Asteroid implements Poolable {
     private final float BASE_SIZE = 256.0f;
     private final float BASE_RADIUS = BASE_SIZE / 2.0f;
 
+    public boolean isSuperAsteroid() {
+        return superAsteroid;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
     public int getHpMax() {
         return hpMax;
     }

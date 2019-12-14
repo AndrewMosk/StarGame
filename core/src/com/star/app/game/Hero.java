@@ -69,6 +69,7 @@ public class Hero extends Ship {
     private StringBuilder tmpStr;
     private float objectCaptureRadius;
     private boolean bgfPowerUp;
+    private float timeSeconds;
 
     public float getObjectCaptureRadius() {
         return objectCaptureRadius;
@@ -110,6 +111,7 @@ public class Hero extends Ship {
         this.createSkillsTable();
         this.shop = new Shop(this);
         this.objectCaptureRadius = 200.0f;
+        this.timeSeconds = 10.0f;
         this.ownerType = OwnerType.PLAYER;
         this.currentWeapon = new Weapon(
                 gc, this, "Laser", 0.2f, 1, 1, 320.0f, 500.0f, 320,
@@ -121,10 +123,10 @@ public class Hero extends Ship {
     }
 
     private void timer() {
-        float timeSeconds = 10.0f;
-        timeSeconds -=Gdx.graphics.getRawDeltaTime();
+        timeSeconds = MathUtils.round((timeSeconds - Gdx.graphics.getRawDeltaTime())*100.0f)/100.0f;
+
         if(timeSeconds > 0){
-            tmpStr.append("\n").append("TIMER: ").append(timeSeconds).append("\n");
+            tmpStr.append("\n").append("BFG POWER TIMER: ").append(timeSeconds).append("\n");
         }else {
             bgfPowerUp = false;
         }
@@ -181,7 +183,7 @@ public class Hero extends Ship {
         updateScore(dt);
 
         if (Gdx.input.isKeyPressed(keysControl.fire)) {
-            currentWeapon.tryToFire();
+            currentWeapon.tryToFire(bgfPowerUp);
         }
         if (Gdx.input.isKeyPressed(keysControl.left)) {
             rotate(180.0f, dt);
@@ -247,6 +249,10 @@ public class Hero extends Ship {
                 tmpStr.setLength(0);
                 tmpStr.append("MONEY +").append(p.getPower());
                 gc.getInfoController().setup(p.getPosition().x, p.getPosition().y, tmpStr, Color.YELLOW);
+                break;
+            case BFG:
+                bgfPowerUp = true;
+
                 break;
         }
     }

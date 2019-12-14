@@ -15,6 +15,11 @@ public class Bullet implements Poolable {
     private int damage;
     private float lifetimeDistance;
     private Ship owner;
+    private boolean bfg;
+
+    public boolean isBfg() {
+        return bfg;
+    }
 
     public int getDamage() {
         return damage;
@@ -52,7 +57,7 @@ public class Bullet implements Poolable {
         this.active = false;
     }
 
-    public void activate(Ship owner, String weaponTitle, float x, float y, float vx, float vy, int damage, float angle, float lifetimeDistance) {
+    public void activate(Ship owner, String weaponTitle, float x, float y, float vx, float vy, int damage, float angle, float lifetimeDistance, boolean bfg) {
         this.weaponTitle = weaponTitle;
         this.position.set(x, y);
         this.velocity.set(vx, vy);
@@ -61,6 +66,7 @@ public class Bullet implements Poolable {
         this.damage = damage;
         this.lifetimeDistance = lifetimeDistance;
         this.owner = owner;
+        this.bfg = bfg;
     }
 
     public void update(float dt) {
