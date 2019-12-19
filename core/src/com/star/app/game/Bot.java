@@ -45,7 +45,7 @@ public class Bot extends Ship {
             accelerate(dt);
         }
         if (gc.getHero().getPosition().dst(position) < currentWeapon.getRadius()) {
-            currentWeapon.tryToFire();
+            currentWeapon.tryToFire(false);
         }
         if (velocity.len() > 50.0f) {
             float bx, by;

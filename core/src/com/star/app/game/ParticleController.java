@@ -11,7 +11,7 @@ import com.star.app.screen.utils.Assets;
 public class ParticleController extends ObjectPool<Particle> {
     public class EffectBuilder {
         public void takePowerUpEffect(float x, float y, int index) {
-            // MONEY(0) blue, AMMOS(1) red, MEDKIT(2) green;
+            // MONEY(0) blue, AMMOS(1) red, MEDKIT(2) green; BFG(3)purple
             switch (index) {
                 case 0:
                     for (int i = 0; i < 16; i++) {
@@ -29,6 +29,12 @@ public class ParticleController extends ObjectPool<Particle> {
                     for (int i = 0; i < 24; i++) {
                         float angle = 6.28f / 24.0f * i;
                         setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 0, 1, 0, 1, 1, 1, 0, 0.4f);
+                    }
+                    break;
+                case 3:
+                    for (int i = 0; i < 24; i++) {
+                        float angle = 6.28f / 32.0f * i;
+                        setup(x, y, (float) Math.cos(angle) * 100.0f, (float) Math.sin(angle) * 100.0f, 0.8f, 3.0f, 2.8f, 136, 6, 196, 1, 180, 6, 196, 1);
                     }
                     break;
             }

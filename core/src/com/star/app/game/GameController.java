@@ -106,9 +106,16 @@ public class GameController {
     }
 
     public void generateTwoBigAsteroids() {
-        for (int i = 0; i < 100; i++) {
+        int probability = MathUtils.random(0, 1);
+        boolean superAsteroid;
+        for (int i = 0; i < 2; i++) {
+            superAsteroid = false;
+            if (i == probability) {
+                superAsteroid = true;
+            }
+
             this.asteroidController.setup(MathUtils.random(0, GameController.SPACE_WIDTH), MathUtils.random(0, GameController.SPACE_HEIGHT),
-                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f);
+                    MathUtils.random(-150.0f, 150.0f), MathUtils.random(-150.0f, 150.0f), 1.0f, superAsteroid);
         }
     }
 
@@ -201,12 +208,13 @@ public class GameController {
                     tmpStr.setLength(0);
                     tmpStr.append(1);
                     b.deactivate();
-                    if (a.takeDamage(b.getDamage())) {
+
+                    if (a.takeDamage(getDamage(a, null, b))) {
                         if (b.getOwner().getOwnerType() == OwnerType.PLAYER) {
                             ((Hero) b.getOwner()).addScore(a.getHpMax() * 100);
-                            for (int k = 0; k < 3; k++) {
-                                powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() / 4.0f);
-                            }
+                            //for (int k = 0; k < 3; k++) {
+                                powerUpsController.setup(a.getPosition().x, a.getPosition().y, a.getScale() / 4.0f, a.isSuperAsteroid());
+                            //}
                         }
                     }
                     break;
@@ -219,7 +227,7 @@ public class GameController {
 
             if (b.getOwner().getOwnerType() == OwnerType.PLAYER && bot.isAlive()) {
                 if (bot.getHitArea().contains(b.getPosition())) {
-                    bot.takeDamage(b.getDamage());
+                    bot.takeDamage(getDamage(null, bot, b));
                     b.deactivate();
                 }
             }
@@ -244,6 +252,22 @@ public class GameController {
                 p.deactivate();
             }
         }
+    }
+
+    private int getDamage(Asteroid a, Bot bot, Bullet b) {
+        int damage;
+
+        if (b.isBfg()) {
+            if (a == null) {
+                damage = bot.getHp();
+            }else {
+                damage = a.getHp();
+            }
+        } else {
+            damage = b.getDamage();
+        }
+
+        return damage;
     }
 
     public void dispose() {

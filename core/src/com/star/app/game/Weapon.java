@@ -72,7 +72,7 @@ public class Weapon {
         fireTimer += dt;
     }
 
-    public void tryToFire() {
+    public void tryToFire(boolean bfg) {
         if (fireTimer > firePeriod && (curBullets > 0 || maxBullets == -1)) {
             fireTimer = 0;
             curBullets--;
@@ -84,7 +84,7 @@ public class Weapon {
                 y = ship.getPosition().y + slots[i].x * MathUtils.sinDeg(ship.getAngle() + slots[i].y);
                 vx = ship.getVelocity().x + bulletSpeed * MathUtils.cosDeg(ship.getAngle() + slots[i].z);
                 vy = ship.getVelocity().y + bulletSpeed * MathUtils.sinDeg(ship.getAngle() + slots[i].z);
-                gc.getBulletController().setup(ship, title, x, y, vx, vy, getRandomDamage(),ship.getAngle() + slots[i].z, radius);
+                gc.getBulletController().setup(ship, title, x, y, vx, vy, getRandomDamage(),ship.getAngle() + slots[i].z, radius, bfg);
             }
         }
     }
