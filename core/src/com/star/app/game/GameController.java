@@ -108,7 +108,7 @@ public class GameController {
     public void generateTwoBigAsteroids() {
         int probability = MathUtils.random(0, 1);
         boolean superAsteroid;
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 100; i++) {
             superAsteroid = false;
             if (i == probability) {
                 superAsteroid = true;
